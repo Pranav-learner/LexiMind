@@ -38,18 +38,34 @@ class VectorStore:
 
     def search(self, query_embedding: list, top_k: int = 3):
         vector = np.array([query_embedding]).astype("float32")
+
         distances, indices = self.index.search(vector, top_k)
 
         results = []
-        for idx in indices[0]:
+
+        for i, idx in enumerate(indices[0]):
+
             if idx < len(self.metadata):
-                results.append(self.metadata[idx])
+
+                metadata_copy = self.metadata[idx].copy()
+
+                distance = float(distances[0][i])
+
+                # 🔥 Convert L2 distance to similarity score
+                similarity = 1 / (1 + distance)
+
+                metadata_copy["score"] = round(similarity, 4)
+
+                results.append(metadata_copy)
 
         return results
 
     def save(self):
         faiss.write_index(self.index, self.index_path)
+
         with open(self.metadata_path, "w", encoding="utf-8") as f:
             json.dump(self.metadata, f, ensure_ascii=False, indent=2)
 
         print(" Vector store saved to disk")
+
+        

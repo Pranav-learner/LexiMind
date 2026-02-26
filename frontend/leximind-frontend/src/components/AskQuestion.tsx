@@ -5,6 +5,7 @@ import AnswerBox from "./AnswerBox";
 export default function AskQuestion() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [sources, setSources] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -14,12 +15,15 @@ export default function AskQuestion() {
     try {
       setLoading(true);
       setError("");
-        setAnswer("");
-        setQuestion("");
-        
+      setAnswer("");
+      setSources("");
 
       const res = await askQuestion(question);
-      setAnswer(res.answer || res);
+
+      setAnswer(res.answer || "");
+      setSources(res.sources || "");
+
+      setQuestion(""); // clear input
     } catch {
       setError("❌ Failed to fetch answer. Please try again.");
     } finally {
@@ -50,18 +54,22 @@ export default function AskQuestion() {
         {loading ? "Thinking..." : "Ask"}
       </button>
 
-      {/* Empty state */}
+
       {!answer && !loading && !error && (
         <p style={{ color: "#666", marginTop: "10px" }}>
           ℹ️ Upload a PDF and ask a question to get started.
         </p>
       )}
 
-      {/* Error state */}
+
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* Answer */}
-      <AnswerBox answer={answer} />
+      {answer && (
+        <AnswerBox
+          answer={answer}
+          sources={sources}
+        />
+      )}
     </div>
   );
 }

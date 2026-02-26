@@ -5,14 +5,39 @@ def format_sources(chunks):
     seen = set()
 
     for chunk in chunks:
-        key = (chunk["source"], chunk["page_number"])
+        key = (
+            chunk["source"],
+            chunk["page_number"],
+            chunk.get("section_heading"),
+            chunk.get("start_paragraph"),
+            chunk.get("end_paragraph")
+        )
+
         if key not in seen:
             seen.add(key)
-            sources.append(
-                f"- {chunk['source']} (page {chunk['page_number']})"
-            )
+
+            section = chunk.get("section_heading")
+            score = chunk.get("score")
+            start_para = chunk.get("start_paragraph")
+            end_para = chunk.get("end_paragraph")
+
+            # Format paragraph range
+            if start_para == end_para:
+                para_text = f"Paragraph {start_para}"
+            else:
+                para_text = f"Paragraphs {start_para}–{end_para}"
+
+            if section:
+                sources.append(
+                    f"- {chunk['source']} | Page {chunk['page_number']} | {para_text} | Section: {section} | Score: {score}"
+                )
+            else:
+                sources.append(
+                    f"- {chunk['source']} | Page {chunk['page_number']} | {para_text} | Score: {score}"
+                )
 
     return "\n".join(sources)
+
 
 def generate_answer(question:str,chunks:list) -> str:
     """

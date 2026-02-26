@@ -1,67 +1,54 @@
 type AnswerBoxProps = {
   answer: string;
+  sources: string;
 };
 
-type SourceItem = {
-  document: string;
-  page: string;
-};
-
-export default function AnswerBox({ answer }: AnswerBoxProps) {
+export default function AnswerBox({ answer, sources }: AnswerBoxProps) {
   if (!answer) return null;
 
-  const [answerText, sourcesRaw] = answer.split("Sources:");
-
-  let sources: SourceItem[] = [];
-
-  if (sourcesRaw) {
-    sources = sourcesRaw
-      .split("\n")
+  const sourceLines =
+    sources
+      ?.split("\n")
       .map((line) => line.trim())
-      .filter((line) => line.startsWith("-"))
-      .map((line) => {
-        // Example: "- AI_Roadmap.pdf (page 3)"
-        const match = line.match(/- (.+) \(page (\d+)\)/);
-        if (!match) return null;
-
-        return {
-          document: match[1],
-          page: match[2],
-        };
-      })
-      .filter(Boolean) as SourceItem[];
-  }
+      .filter((line) => line.startsWith("-")) || [];
 
   return (
     <div
       style={{
         marginTop: "20px",
-        padding: "16px",
+        padding: "20px",
         border: "1px solid #ddd",
-        borderRadius: "6px",
+        borderRadius: "8px",
         backgroundColor: "#fafafa",
       }}
     >
-      <h3>🧠 Answer</h3>
+      <h3 style={{ marginBottom: "10px" }}>🧠 Answer</h3>
 
-      <pre style={{ whiteSpace: "pre-wrap", lineHeight: "1.6" }}>
-        {answerText.trim()}
-      </pre>
+      <div
+        style={{
+          whiteSpace: "pre-wrap",
+          lineHeight: "1.7",
+          fontSize: "15px",
+        }}
+      >
+        {answer.trim()}
+      </div>
 
-      {sources.length > 0 && (
+      {/* {sourceLines.length > 0 && (
         <>
-          <hr />
+          <hr style={{ margin: "20px 0" }} />
           <h4>📚 Sources</h4>
 
           <ul>
-            {sources.map((src, index) => (
+            {sourceLines.map((line, index) => (
               <li key={index}>
-                <strong>{src.document}</strong> — page {src.page}
+                {line.replace("- ", "")}
               </li>
             ))}
           </ul>
         </>
-      )}
+      )} */}
     </div>
   );
 }
+
