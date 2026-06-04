@@ -31,6 +31,10 @@ class VectorStore:
         else:
             self.metadata = []
 
+    def size(self) -> int:
+        """Number of indexed vectors (== number of metadata records)."""
+        return len(self.metadata)
+
     def add(self, embedding: list, metadata: dict):
         vector = np.array([embedding]).astype("float32")
         self.index.add(vector)
@@ -45,7 +49,11 @@ class VectorStore:
 
         for i, idx in enumerate(indices[0]):
 
-            if idx < len(self.metadata):
+            # FAISS pads results with -1 when top_k > number of indexed vectors. The
+            # old check `idx < len(metadata)` let -1 through (since -1 < len), which
+            # aliased to metadata[-1] and injected the last chunk repeatedly. Require a
+            # valid, in-range index.
+            if 0 <= idx < len(self.metadata):
 
                 metadata_copy = self.metadata[idx].copy()
 

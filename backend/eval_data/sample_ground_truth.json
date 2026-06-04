@@ -1,0 +1,12 @@
+[
+  {"query": "How does the operating system schedule processes?", "relevant_sources": ["OS-Book.pdf"]},
+  {"query": "What is a deadlock and how can it be prevented?", "relevant_sources": ["OS-Book.pdf"]},
+  {"query": "Explain virtual memory and paging.", "relevant_sources": ["OS-Book.pdf"]},
+  {"query": "What is mutual exclusion in concurrent processes?", "relevant_sources": ["OS-Book.pdf"]},
+  {"query": "How do semaphores work for synchronization?", "relevant_sources": ["OS-Book.pdf"]},
+  {"query": "What is the difference between a process and a thread?", "relevant_sources": ["OS-Book.pdf"]},
+  {"query": "How does demand paging reduce memory usage?", "relevant_sources": ["OS-Book.pdf"]},
+  {"query": "What are the prerequisites for learning AI?", "relevant_sources": ["AI Roadmap_ based on Stanford AI Graduate Certificate.pdf"]},
+  {"query": "What is the recommended roadmap to master machine learning?", "relevant_sources": ["AI Roadmap_ based on Stanford AI Graduate Certificate.pdf"]},
+  {"query": "How do Java generics and the collections framework work?", "relevant_sources": ["javabook 2.pdf"]}
+]

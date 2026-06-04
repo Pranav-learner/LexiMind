@@ -1,16 +1,16 @@
-from fastapi import APIRouter, File, UploadFile
 import os
-from app.services.pdf_service import extract_text_from_pdf
-from app.services.chunking_service import chunk_text
-from app.services.embedding_service import generate_embedding
-from app.services.vector_store import VectorStore
 
-# Global in-memory vector store (temporary for now)
-vector_store = VectorStore(dimension=384)
+from fastapi import APIRouter, File, UploadFile
 
-router  = APIRouter(prefix="/upload", tags=["upload"])
-UPLOAD_DIR = "uploaded_pdfs"
+from app.core.config import settings
+from app.core.state import bm25_retriever, vector_store
+from app.services.ingestion_service import ingest_pdf
+
+router = APIRouter(prefix="/upload", tags=["upload"])
+
+UPLOAD_DIR = settings.upload_dir
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
 
 @router.post("/pdf")
 async def upload_pdf(file: UploadFile = File(...)):
@@ -18,34 +18,6 @@ async def upload_pdf(file: UploadFile = File(...)):
     with open(file_path, "wb") as f:
         f.write(await file.read())
 
-    extracted_pages = extract_text_from_pdf(file_path)  # first extract text from pdf file
-    chunks = chunk_text(extracted_pages)  # make th chunks of the extracted page
-
-    # After chunking
-    for chunk in chunks:
-        embedding = generate_embedding(chunk["text"])  # embedded each chunks 
-
-        vector_store.add(   # stored in the vector database
-            embedding,
-            {
-                "text": chunk["text"],
-                "page_number": chunk["page_number"],
-                "start_paragraph": chunk["start_paragraph"],
-                "section_heading": chunk.get("section_heading"),
-                "end_paragraph": chunk["end_paragraph"],
-                "chunk_index": chunk["chunk_index"],
-                "source": file.filename
-            }
-        )
-        vector_store.save()
-
-        
-
-    return {
-        "filename": file.filename,
-        "pages_extracted": len(extracted_pages),
-        "total_chunks": len(chunks),
-        "message": "PDF processed and indexed successfully"
-    }
-
-
+    # Ingestion (extract -> chunk -> enrich metadata -> batch embed -> index) lives in
+    # the ingestion service; the route only handles transport.
+    return ingest_pdf(file_path, file.filename, vector_store, bm25_retriever)

@@ -6,5 +6,5 @@ router = APIRouter(prefix="/health", tags=["Health"])
 def health_check():
     return {
         "status": "OK",
-        "service": "Bookture API"
+        "service": "LexiMind API"
     }
