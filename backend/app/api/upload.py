@@ -30,12 +30,16 @@ async def upload_pdf(file: UploadFile = File(...)):
             {
                 "text": chunk["text"],
                 "page_number": chunk["page_number"],
+                "start_paragraph": chunk["start_paragraph"],
+                "section_heading": chunk.get("section_heading"),
+                "end_paragraph": chunk["end_paragraph"],
                 "chunk_index": chunk["chunk_index"],
                 "source": file.filename
             }
         )
         vector_store.save()
-        print(f"Stored chunk {chunk['chunk_index']} from page {chunk['page_number']}")
+
+        
 
     return {
         "filename": file.filename,
