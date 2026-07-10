@@ -29,9 +29,36 @@ from app.db.base import Base, get_db
 from app.auth import models as _auth_models  # noqa: F401
 from app.chat import models as _chat_models  # noqa: F401
 from app.documents import models as _doc_models  # noqa: F401
+from app.summaries import models as _sum_models  # noqa: F401
 from app.workspaces import models as _ws_models  # noqa: F401
 
 from app.retrieval.schemas import derive_document_id
+
+
+class FakeSummaryEngine:
+    """Deterministic stand-in for the faiss-backed summary engine.
+
+    Emits a `plan`, two grounded `section` events (with a citation each), then a `final`, mirroring
+    the PipelineSummaryEngine event contract — so the whole generation pipeline (sections,
+    citations, progress, persistence) is exercised without retrieval/LLM.
+    """
+
+    def __init__(self, sections=None):
+        self.sections = sections or [
+            {"heading": "Overview", "content": "This is the overview.",
+             "citations": [{"chunk_id": "doc_x:0", "document_id": "doc_x", "page_number": 3,
+                            "text": "overview evidence", "confidence": 0.88}]},
+            {"heading": "Conclusions", "content": "These are the conclusions.",
+             "citations": [{"chunk_id": "doc_x:9", "document_id": "doc_x", "page_number": 20,
+                            "text": "conclusion evidence", "confidence": 0.77}]},
+        ]
+
+    def generate(self, summary, db):
+        yield {"type": "plan", "total": len(self.sections), "model": "llama3", "language": "en"}
+        for i, sec in enumerate(self.sections, start=1):
+            yield {"type": "section", "heading": sec["heading"], "order": i,
+                   "content": sec["content"], "citations": sec.get("citations", [])}
+        yield {"type": "final", "token_usage": 42}
 
 
 class FakeChatEngine:
@@ -205,6 +232,9 @@ def app(engine, SessionFactory, fake_index):
     from app.documents.api import get_index_context, get_ingestor
     from app.documents.api import router as document_router
     from app.documents.reading_api import router as reading_router
+    from app.summaries.api import get_summary_runner
+    from app.summaries.api import router as summary_router
+    from app.summaries.runner import InlineRunner
     from app.workspaces.api import router as workspace_router
 
     def override_get_db():
@@ -220,10 +250,13 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(document_router)
     application.include_router(reading_router)
     application.include_router(chat_router)
+    application.include_router(summary_router)
     application.dependency_overrides[get_db] = override_get_db
     application.dependency_overrides[get_index_context] = lambda: fake_index
     application.dependency_overrides[get_ingestor] = lambda: make_fake_ingest()
     application.dependency_overrides[get_chat_engine] = lambda: FakeChatEngine()
+    # Summaries run inline (synchronously) in tests, using the same in-memory DB + a fake engine.
+    application.dependency_overrides[get_summary_runner] = lambda: InlineRunner(SessionFactory, FakeSummaryEngine())
     return application
 
 

@@ -9,6 +9,7 @@ from app.chat.api import router as chat_router
 from app.db.base import init_db
 from app.documents.api import router as document_router
 from app.documents.reading_api import router as reading_router
+from app.summaries.api import router as summary_router
 from app.workspaces.api import router as workspace_router
 
 app = FastAPI(title="LexiMind API")
@@ -35,6 +36,7 @@ app.include_router(workspace_router)
 app.include_router(document_router)
 app.include_router(reading_router)
 app.include_router(chat_router)
+app.include_router(summary_router)
 app.include_router(upload_router)
 app.include_router(query_router)
 

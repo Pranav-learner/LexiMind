@@ -241,11 +241,20 @@ export default function DocumentDetailDrawer({
 
           <Section title="AI features">
             <div className="doc-ai-features">
-              <button className="ws-btn ghost" disabled title="Coming soon">📝 Summary</button>
+              <button
+                className="ws-btn ghost"
+                title="Summarize this document"
+                onClick={() =>
+                  navigate(`/workspace/${workspaceId}/summaries`, {
+                    state: { summarize: { document_id: doc.id } },
+                  })
+                }
+              >
+                ✨ Summarize
+              </button>
               <button className="ws-btn ghost" disabled title="Coming soon">💬 Chat</button>
               <button className="ws-btn ghost" disabled title="Coming soon">🎴 Flashcards</button>
             </div>
-            <span className="doc-muted">Coming soon.</span>
           </Section>
         </div>
       </aside>

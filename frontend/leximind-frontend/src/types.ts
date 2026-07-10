@@ -320,3 +320,96 @@ export type ChatStreamEvent =
   | { type: "token"; data: { text: string } }
   | { type: "done"; data: ChatMessage }
   | { type: "error"; data: { message?: string; error: string } };
+
+// -------------------------------------------------------------- summaries
+// Contracts for AI Summaries (Phase 3, Module 5). Generation is asynchronous: a
+// created summary starts queued/processing and is polled via GET /{id}/status until
+// it reaches a terminal state. NOTE: the section type is named `SummarySectionT`
+// (never `SummarySection`) to avoid any collision, and a citation's `document_id` is
+// the VECTOR document id (resolve via GET .../documents/by-vector/{document_id}).
+
+export type SummaryType = "quick" | "standard" | "detailed" | "bullet" | "chapterwise";
+export type SummaryStatus =
+  | "queued"
+  | "processing"
+  | "completed"
+  | "failed"
+  | "cancelled";
+export type SummaryScope = "document" | "multi" | "workspace";
+
+export type SummaryStatusFilter = "any" | SummaryStatus;
+export type SummarySortField = "created_at" | "updated_at" | "title";
+
+export interface Summary {
+  id: string;
+  workspace_id: string;
+  owner_id: string;
+  scope: SummaryScope;
+  document_id: string | null;
+  document_ids: string[] | null;
+  conversation_id: string | null;
+  title: string;
+  summary_type: SummaryType;
+  language: string;
+  status: SummaryStatus;
+  progress: number; // 0–100
+  stage: string;
+  error: string | null;
+  model_name: string;
+  prompt_version: string;
+  token_usage: unknown;
+  generation_ms: number | null;
+  section_count: number;
+  version: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SummaryCitation {
+  id: string;
+  document_id: string; // VECTOR document id
+  chunk_id: string;
+  page_number: number;
+  workspace_id: string;
+  citation_text: string;
+  confidence: number;
+}
+
+export interface SummarySectionT {
+  id: string;
+  heading: string;
+  order: number;
+  content: string; // Markdown
+  citation_count: number;
+  citations: SummaryCitation[];
+}
+
+export type SummaryDetail = Summary & { sections: SummarySectionT[] };
+
+export interface SummaryListResponse {
+  items: Summary[];
+  total: number;
+  page: number;
+  page_size: number;
+  pages: number;
+}
+
+export interface SummaryListParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  summary_type?: SummaryType | "";
+  status?: SummaryStatusFilter;
+  document_id?: string;
+  sort_by?: SummarySortField;
+  order?: SortOrder;
+}
+
+export interface SummaryCreateInput {
+  summary_type: SummaryType;
+  scope?: SummaryScope;
+  document_id?: string;
+  document_ids?: string[];
+  title?: string;
+  top_k?: number;
+}

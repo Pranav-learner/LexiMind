@@ -42,16 +42,23 @@ Answer:
 """
 
 
-def generate_answer(question: str, context: str) -> str:
-    """Run the local LLM (Ollama) on the grounded prompt and return the answer text."""
-    prompt = build_prompt(question, context)
+def complete(prompt: str) -> str:
+    """Run the local LLM (Ollama) on a fully-assembled RAW prompt and return the text.
 
+    Shared low-level completion used by the QA answer path and the summaries engine (which
+    builds its own summarization prompt and must not be re-wrapped in the QA system prompt).
+    """
     result = subprocess.run(
         ["ollama", "run", settings.llm_model],
         input=prompt.encode("utf-8"),  # force UTF-8 bytes (Ollama expects UTF-8)
         capture_output=True,
     )
     return result.stdout.decode("utf-8", errors="ignore").strip()
+
+
+def generate_answer(question: str, context: str) -> str:
+    """Run the local LLM (Ollama) on the grounded QA prompt and return the answer text."""
+    return complete(build_prompt(question, context))
 
 
 # --- Module 4: chat prompt + streaming ---------------------------------------
@@ -80,6 +87,36 @@ Context:
 User: {question}
 
 Assistant:
+"""
+
+
+_SUMMARY_STYLE = {
+    "quick": "Write ONE tight paragraph (an executive overview). No headings, no lists.",
+    "standard": "Write 1–3 clear paragraphs suitable for study revision. Prose, not bullets.",
+    "detailed": "Write a thorough, well-structured explanation (several paragraphs). Use Markdown sub-structure if helpful.",
+    "bullet": "Write concise Markdown bullet points only (no paragraphs). One idea per bullet.",
+    "chapterwise": "Summarize this section/chapter clearly in a few sentences of prose.",
+}
+
+
+def build_summary_prompt(summary_type: str, heading: str, context: str) -> str:
+    """Assemble a grounded summarization prompt for one section.
+
+    The context is the Phase-2 engineered context (deduped, ranked, budgeted, compressed) for this
+    section — NOT the raw document. The LLM summarizes only what the context contains, so the
+    output stays grounded and its citations map back to the retrieved evidence.
+    """
+    style = _SUMMARY_STYLE.get(summary_type, _SUMMARY_STYLE["standard"])
+    return f"""You are LexiMind, a precise summarization assistant.
+
+Summarize the section titled "{heading}" using ONLY the information in the context below.
+Do not invent facts or add information not present in the context. If the context is thin, be
+brief rather than speculative. {style}
+
+Context:
+{context}
+
+Summary of "{heading}":
 """
 
 
