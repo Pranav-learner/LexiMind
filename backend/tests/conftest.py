@@ -174,6 +174,7 @@ def app(engine, SessionFactory, fake_index):
     from app.auth.api import router as auth_router
     from app.documents.api import get_index_context, get_ingestor
     from app.documents.api import router as document_router
+    from app.documents.reading_api import router as reading_router
     from app.workspaces.api import router as workspace_router
 
     def override_get_db():
@@ -187,6 +188,7 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(auth_router)
     application.include_router(workspace_router)
     application.include_router(document_router)
+    application.include_router(reading_router)
     application.dependency_overrides[get_db] = override_get_db
     application.dependency_overrides[get_index_context] = lambda: fake_index
     application.dependency_overrides[get_ingestor] = lambda: make_fake_ingest()

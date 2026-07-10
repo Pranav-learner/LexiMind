@@ -104,3 +104,41 @@ class Document(Base):
         # Chunk-level ops resolve a document by (workspace, vector id).
         Index("ix_documents_ws_vector", "workspace_id", "vector_document_id"),
     )
+
+
+def _rs_uuid() -> str:
+    return f"rs_{uuid.uuid4().hex[:16]}"
+
+
+class ReadingSession(Base):
+    """Per-user reading state for a document (Phase 3, Module 3: PDF Viewer).
+
+    Backs "restore previous session automatically" and the "recently viewed" history. Exactly
+    one row per (owner, document) — the service upserts it on every reading-progress ping. This
+    is a NEW table (not new columns), so it is created cleanly by `create_all` even on an
+    existing SQLite file without a migration.
+    """
+
+    __tablename__ = "reading_sessions"
+
+    id: Mapped[str] = mapped_column(String(40), primary_key=True, default=_rs_uuid)
+    owner_id: Mapped[str] = mapped_column(String(40), index=True, nullable=False)
+    workspace_id: Mapped[str] = mapped_column(String(40), index=True, nullable=False)
+    document_id: Mapped[str] = mapped_column(String(40), index=True, nullable=False)
+
+    page: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    scroll_top: Mapped[int] = mapped_column(Integer, nullable=False, default=0)   # px offset
+    zoom: Mapped[int] = mapped_column(Integer, nullable=False, default=100)       # percent
+    rotation: Mapped[int] = mapped_column(Integer, nullable=False, default=0)     # degrees
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_now, onupdate=_now, nullable=False
+    )
+
+    __table_args__ = (
+        # One row per (owner, document) — the upsert key.
+        Index("ix_reading_owner_document", "owner_id", "document_id", unique=True),
+        # Recency ordering for "recently viewed".
+        Index("ix_reading_owner_updated", "owner_id", "updated_at"),
+    )

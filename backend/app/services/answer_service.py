@@ -1,8 +1,8 @@
 import subprocess
-from typing import List
+from typing import Any, Dict, List
 
 from app.core.config import settings
-from app.context.schemas import Citation
+from app.context.schemas import Citation, Evidence
 
 # Static, grounded system instructions. Kept small (within the system-prompt token reserve).
 SYSTEM_PROMPT = """You are a precise question-answering assistant.
@@ -70,3 +70,31 @@ def format_citations(citations: List[Citation]) -> str:
             parts.append(f"Section: {c.section}")
         lines.append(" | ".join(parts))
     return "\n".join(lines)
+
+
+def structured_citations(evidence: List[Evidence]) -> List[Dict[str, Any]]:
+    """Machine-readable citations for the PDF Viewer (Module 3).
+
+    Unlike `format_citations` (a display string), this returns one object per source chunk with
+    the fields the viewer needs to jump-and-highlight: the vector `document_id` (resolvable to a
+    Document row), `source` filename, `page_number`, `section`, and a short `text` snippet to
+    highlight in the page's text layer. Deduplicated by chunk_id, order preserved.
+    """
+    out: List[Dict[str, Any]] = []
+    seen = set()
+    for ev in evidence:
+        for c in ev.citations:
+            if c.chunk_id in seen:
+                continue
+            seen.add(c.chunk_id)
+            out.append(
+                {
+                    "chunk_id": c.chunk_id,
+                    "document_id": c.document_id,
+                    "source": c.source,
+                    "page_number": c.page_number,
+                    "section": c.section,
+                    "text": (ev.text or "")[:400],
+                }
+            )
+    return out

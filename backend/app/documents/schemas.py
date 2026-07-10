@@ -127,6 +127,61 @@ class UploadResponse(BaseModel):
     items: List[UploadItemResult]
 
 
+# --- Module 3: PDF Viewer DTOs ---
+class ChunkOut(BaseModel):
+    """One indexed chunk of a document, exposed for citation highlighting + outline."""
+
+    chunk_id: str
+    document_id: Optional[str]
+    page_number: Optional[int]
+    section: Optional[str]
+    chunk_index: Optional[int]
+    text: str
+
+
+class DocumentChunksResponse(BaseModel):
+    document_id: str
+    vector_document_id: str
+    total: int
+    items: List[ChunkOut]
+
+
+class ReadingProgressUpdate(BaseModel):
+    page: int = Field(ge=1)
+    scroll_top: int = Field(default=0, ge=0)
+    zoom: int = Field(default=100, ge=10, le=1000)
+    rotation: int = Field(default=0)
+
+
+class ReadingSessionOut(BaseModel):
+    id: str
+    workspace_id: str
+    document_id: str
+    page: int
+    scroll_top: int
+    zoom: int
+    rotation: int
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class ReadingHistoryItem(BaseModel):
+    """A recently-viewed document = its reading session joined with document display fields."""
+
+    document_id: str
+    display_name: str
+    filename: str
+    file_type: str
+    page: int
+    page_count: int
+    updated_at: datetime
+
+
+class ReadingHistoryResponse(BaseModel):
+    items: List[ReadingHistoryItem]
+
+
 class SortField(str, Enum):
     display_name = "display_name"   # alphabetical
     created_at = "created_at"       # newest / oldest

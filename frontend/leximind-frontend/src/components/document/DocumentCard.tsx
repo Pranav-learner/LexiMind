@@ -10,6 +10,7 @@ interface Props {
   doc: LibraryDocument;
   view: "grid" | "list";
   onOpen: (doc: LibraryDocument) => void;
+  onView: (doc: LibraryDocument) => void;
   onRename: (doc: LibraryDocument) => void;
   onArchive: (doc: LibraryDocument) => void;
   onRestore: (doc: LibraryDocument) => void;
@@ -33,6 +34,7 @@ function DocumentCardBase({
   doc,
   view,
   onOpen,
+  onView,
   onRename,
   onArchive,
   onRestore,
@@ -46,6 +48,7 @@ function DocumentCardBase({
 
   const actions = (
     <div className="ws-card-actions" onClick={(e) => e.stopPropagation()}>
+      <button className="ws-icon-btn" title="Open in viewer" aria-label="Open in viewer" onClick={() => onView(d)}>📖</button>
       <button className="ws-icon-btn" title="Open details" aria-label="Open details" onClick={() => onOpen(d)}>👁️</button>
       <button className="ws-icon-btn" title="Rename" aria-label="Rename" onClick={() => onRename(d)}>✏️</button>
       <button className="ws-icon-btn" title="Reindex" aria-label="Reindex" onClick={() => onReindex(d)}>🔄</button>
@@ -72,10 +75,10 @@ function DocumentCardBase({
     return (
       <div
         className="doc-row"
-        onClick={() => onOpen(d)}
+        onClick={() => onView(d)}
         role="button"
         tabIndex={0}
-        onKeyDown={(e) => e.key === "Enter" && onOpen(d)}
+        onKeyDown={(e) => e.key === "Enter" && onView(d)}
       >
         <span className="doc-row-icon">{icon}</span>
         <div className="doc-row-main">
@@ -103,10 +106,10 @@ function DocumentCardBase({
   return (
     <div
       className="ws-card doc-card"
-      onClick={() => onOpen(d)}
+      onClick={() => onView(d)}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => e.key === "Enter" && onOpen(d)}
+      onKeyDown={(e) => e.key === "Enter" && onView(d)}
     >
       <div className="ws-card-top">
         <span className="ws-card-icon doc-card-icon">{icon}</span>

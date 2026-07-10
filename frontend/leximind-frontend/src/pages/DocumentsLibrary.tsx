@@ -5,7 +5,7 @@
 // AbortController so a newer query aborts the older in-flight request. Cards are memoized.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import * as docApi from "../api/documents";
 import { getWorkspace } from "../api/workspaces";
 import { ApiError } from "../api/client";
@@ -26,6 +26,9 @@ const PAGE_SIZE = 12;
 
 export default function DocumentsLibrary() {
   const { workspaceId = "" } = useParams();
+  const navigate = useNavigate();
+  const openViewer = (doc: LibraryDocument) =>
+    navigate(`/workspace/${workspaceId}/document/${doc.id}`);
 
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [items, setItems] = useState<LibraryDocument[]>([]);
@@ -210,6 +213,7 @@ export default function DocumentsLibrary() {
                 doc={d}
                 view={view}
                 onOpen={setSelected}
+                onView={openViewer}
                 onRename={renameDoc}
                 onArchive={(doc) => mutate(() => docApi.archiveDocument(workspaceId, doc.id))}
                 onRestore={(doc) => mutate(() => docApi.restoreDocument(workspaceId, doc.id))}

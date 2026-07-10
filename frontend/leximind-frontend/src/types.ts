@@ -153,3 +153,67 @@ export interface UploadItemResult {
   error: string | null;
   document: LibraryDocument | null;
 }
+
+// ----------------------------------------------------------------- viewer
+// Contracts for the Intelligent PDF Viewer (Phase 3, Module 3). Mirrors the
+// backend chunk / reading-session / query-citation DTOs.
+
+export interface PdfChunk {
+  chunk_id: string;
+  document_id: string;
+  page_number: number;
+  section: string | null;
+  chunk_index: number;
+  text: string;
+}
+
+export interface DocumentChunksResponse {
+  document_id: string;
+  vector_document_id: string;
+  total: number;
+  items: PdfChunk[];
+}
+
+export interface ReadingSession {
+  document_id: string;
+  page: number;
+  scroll_top: number;
+  zoom: number; // percent
+  rotation: number;
+  updated_at: string;
+}
+
+export interface ReadingHistoryItem {
+  document_id: string;
+  display_name: string;
+  filename: string;
+  file_type: string;
+  page: number;
+  page_count: number;
+  updated_at: string;
+}
+
+export interface ReadingHistoryResponse {
+  items: ReadingHistoryItem[];
+}
+
+// A citation returned by POST /query. NOTE: `document_id` here is the VECTOR
+// document id (resolve via GET .../documents/by-vector/{document_id}).
+export interface QueryCitation {
+  chunk_id: string;
+  document_id: string;
+  source: string; // filename
+  page_number: number;
+  section: string | null;
+  text: string;
+}
+
+export interface QueryResponse {
+  question: string;
+  answer: string;
+  sources: string;
+  citations: QueryCitation[];
+  analysis?: unknown;
+  retrieval?: unknown;
+  context?: unknown;
+}

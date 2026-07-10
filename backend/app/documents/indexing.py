@@ -32,6 +32,29 @@ def count_chunks(vector_store, vector_document_id: str, workspace_id: str | None
     return vector_store.count_where(chunk_predicate(vector_document_id, workspace_id))
 
 
+def list_document_chunks(
+    vector_store,
+    vector_document_id: str,
+    workspace_id: str | None,
+    *,
+    page: int | None = None,
+) -> list[dict]:
+    """Return a document's chunk metadata records, sorted by (page_number, chunk_index).
+
+    Optionally filtered to a single `page`. Powers the viewer's citation highlighting,
+    section outline, and per-page text lookup. Read-only over the vector metadata list.
+    """
+    match = chunk_predicate(vector_document_id, workspace_id)
+    records = [m for m in vector_store.metadata if match(m)]
+    if page is not None:
+        records = [m for m in records if m.get("page_number") == page]
+
+    def _key(m):
+        return (m.get("page_number") or 0, m.get("chunk_index") or 0)
+
+    return sorted(records, key=_key)
+
+
 def remove_document_chunks(
     vector_store,
     bm25_retriever,

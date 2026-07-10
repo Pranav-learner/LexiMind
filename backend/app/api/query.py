@@ -8,7 +8,11 @@ from app.core.state import context_builder, pipeline
 from app.db.base import get_db
 from app.documents.repository import DocumentRepository
 from app.retrieval.filters import build_filter
-from app.services.answer_service import format_citations, generate_answer
+from app.services.answer_service import (
+    format_citations,
+    generate_answer,
+    structured_citations,
+)
 from app.services.embedding_service import generate_embedding
 
 router = APIRouter(prefix="/query", tags=["query"])
@@ -62,6 +66,8 @@ def query_knowledge(req: QueryRequest, db: Session = Depends(get_db)):
         "question": req.question,
         "answer": answer,
         "sources": sources,
+        # Module 3: machine-readable citations so the UI can jump-and-highlight in the viewer.
+        "citations": structured_citations(ctx.evidence),
         "analysis": {
             "query_type": result.analysis.query_type,
             "intent": result.analysis.intent,

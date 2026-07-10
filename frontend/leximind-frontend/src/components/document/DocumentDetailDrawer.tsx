@@ -4,6 +4,7 @@
 // overlay click.
 
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import * as api from "../../api/documents";
 import { ApiError } from "../../api/client";
 import type { LibraryDocument, LibraryDocumentDetail } from "../../types";
@@ -24,6 +25,7 @@ export default function DocumentDetailDrawer({
   onClose,
   onChanged,
 }: Props) {
+  const navigate = useNavigate();
   const [detail, setDetail] = useState<LibraryDocumentDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -150,6 +152,7 @@ export default function DocumentDetailDrawer({
         {error && <div className="ws-error-banner">{error}</div>}
 
         <div className="doc-drawer-actions">
+          <button className="ws-btn primary" onClick={() => navigate(`/workspace/${workspaceId}/document/${doc.id}`)}>📖 Open in viewer</button>
           <button className="ws-btn ghost" disabled={busy} onClick={() => mutate(() => api.reindexDocument(workspaceId, doc.id))}>🔄 Reindex</button>
           {d.is_archived ? (
             <button className="ws-btn ghost" disabled={busy} onClick={() => mutate(() => api.restoreDocument(workspaceId, doc.id))}>♻️ Restore</button>

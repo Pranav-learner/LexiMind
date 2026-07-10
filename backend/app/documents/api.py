@@ -26,6 +26,7 @@ from fastapi import (
     Query,
     UploadFile,
 )
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from app.auth.dependencies import get_current_user_id
@@ -36,6 +37,8 @@ from app.documents.errors import DocumentError
 from app.documents.repository import DocumentRepository
 from app.documents.schemas import (
     ArchivedFilter,
+    ChunkOut,
+    DocumentChunksResponse,
     DocumentDetail,
     DocumentListResponse,
     DocumentOut,
@@ -254,6 +257,84 @@ def get_document(
     except Exception:
         detail.index_health = None  # index layer unavailable — still return the row
     return detail
+
+
+# ----------------------------------------------------------------- viewer: resolve citation
+@router.get("/by-vector/{vector_document_id}", response_model=DocumentOut)
+def resolve_document_by_vector(
+    workspace_id: str,
+    vector_document_id: str,
+    owner_id: str = Depends(get_current_user_id),
+    db: Session = Depends(get_db),
+):
+    """Map an AI citation's `document_id` (the vector id) to its Document row.
+
+    Lets the frontend jump from a `[Source: OS.pdf Page 142]` citation straight into the
+    viewer. 404 if the workspace isn't owned or no live document matches.
+    """
+    _verify_workspace(db, workspace_id, owner_id)
+    doc = _service(db).get_by_vector_id(workspace_id, vector_document_id)
+    if doc is None:
+        raise HTTPException(status_code=404, detail="No document matches that citation.")
+    return _out(doc)
+
+
+# ----------------------------------------------------------------- viewer: raw PDF bytes
+@router.get("/{document_id}/file")
+def get_document_file(
+    workspace_id: str,
+    document_id: str,
+    owner_id: str = Depends(get_current_user_id),
+    db: Session = Depends(get_db),
+):
+    """Stream the stored file so PDF.js can render it. Auth + owner scoped."""
+    _verify_workspace(db, workspace_id, owner_id)
+    doc = _handle(lambda: _service(db).get(document_id, owner_id))
+    if not doc.storage_path or not os.path.exists(doc.storage_path):
+        raise HTTPException(status_code=404, detail="Source file is unavailable.")
+    return FileResponse(
+        doc.storage_path,
+        media_type=doc.mime_type or "application/pdf",
+        filename=doc.filename,
+        headers={"Content-Disposition": f'inline; filename="{doc.filename}"'},
+    )
+
+
+# ----------------------------------------------------------------- viewer: chunks (per page)
+@router.get("/{document_id}/chunks", response_model=DocumentChunksResponse)
+def get_document_chunks(
+    workspace_id: str,
+    document_id: str,
+    page: int | None = Query(None, ge=1, description="Restrict to a single 1-based page."),
+    owner_id: str = Depends(get_current_user_id),
+    db: Session = Depends(get_db),
+    index_ctx=Depends(get_index_context),
+):
+    """Return a document's indexed chunks (page, section, text) for citation highlighting,
+    the section outline, and per-page text lookup."""
+    _verify_workspace(db, workspace_id, owner_id)
+    doc = _handle(lambda: _service(db).get(document_id, owner_id))
+    vector_store, _ = index_ctx
+    records = indexing.list_document_chunks(
+        vector_store, doc.vector_document_id, doc.workspace_id, page=page
+    )
+    items = [
+        ChunkOut(
+            chunk_id=m.get("chunk_id") or f"{doc.vector_document_id}:{m.get('chunk_index')}",
+            document_id=m.get("document_id"),
+            page_number=m.get("page_number"),
+            section=m.get("section") or m.get("section_heading"),
+            chunk_index=m.get("chunk_index"),
+            text=m.get("text", ""),
+        )
+        for m in records
+    ]
+    return DocumentChunksResponse(
+        document_id=doc.id,
+        vector_document_id=doc.vector_document_id,
+        total=len(items),
+        items=items,
+    )
 
 
 # ----------------------------------------------------------------- rename / edit
