@@ -96,5 +96,19 @@ class Settings:
     # PBKDF2 iteration count for password hashing (stdlib hashlib, no external dep).
     pbkdf2_iterations: int = field(default_factory=lambda: _env_int("LEXIMIND_PBKDF2_ITERS", 240_000))
 
+    # --- Phase 3 Module 2: Document Library ---
+    # Maximum accepted upload size (bytes). Default 50 MB. Enforced in the documents service
+    # BEFORE any extraction/embedding work so oversized files are rejected cheaply.
+    max_upload_bytes: int = field(default_factory=lambda: _env_int("LEXIMIND_MAX_UPLOAD_BYTES", 50 * 1024 * 1024))
+    # Currently supported document extensions. Kept as a set so future media types (images,
+    # audio, video, web pages) slot in without code changes beyond an extractor.
+    supported_document_extensions: frozenset = field(
+        default_factory=lambda: frozenset(
+            e.strip().lower()
+            for e in _env("LEXIMIND_SUPPORTED_DOC_EXTS", "pdf").split(",")
+            if e.strip()
+        )
+    )
+
 
 settings = Settings()

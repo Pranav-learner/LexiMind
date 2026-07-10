@@ -13,7 +13,14 @@ from typing import Any, Dict, Optional
 
 from app.retrieval.schemas import RetrievalFilter
 
-_ALLOWED_FIELDS = {"document_id", "workspace_id", "workspace", "source", "topic"}
+_ALLOWED_FIELDS = {
+    "document_id",
+    "workspace_id",
+    "workspace",
+    "source",
+    "topic",
+    "exclude_document_id",
+}
 
 
 def build_filter(raw: Optional[Dict[str, Any]]) -> Optional[RetrievalFilter]:

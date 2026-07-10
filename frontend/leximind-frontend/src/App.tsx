@@ -12,6 +12,7 @@ import { useAuth } from "./context/AuthContext";
 const Login = lazy(() => import("./pages/Login"));
 const WorkspacesDashboard = lazy(() => import("./pages/WorkspacesDashboard"));
 const WorkspaceDetail = lazy(() => import("./pages/WorkspaceDetail"));
+const DocumentsLibrary = lazy(() => import("./pages/DocumentsLibrary"));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -52,6 +53,14 @@ export default function App() {
           element={
             <RequireAuth>
               <WorkspaceDetail />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/workspace/:workspaceId/library"
+          element={
+            <RequireAuth>
+              <DocumentsLibrary />
             </RequireAuth>
           }
         />

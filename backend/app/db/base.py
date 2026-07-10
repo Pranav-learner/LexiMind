@@ -66,6 +66,7 @@ def init_db() -> None:
     """Create all tables. Importing the model modules registers them on Base.metadata."""
     # Imported for their side effect of registering mappers on Base.metadata.
     from app.auth import models as _auth_models  # noqa: F401
+    from app.documents import models as _doc_models  # noqa: F401
     from app.workspaces import models as _ws_models  # noqa: F401
 
     Base.metadata.create_all(bind=engine)

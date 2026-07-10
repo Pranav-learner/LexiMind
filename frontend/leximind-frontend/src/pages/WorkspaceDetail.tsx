@@ -67,6 +67,13 @@ export default function WorkspaceDetail() {
           <Stat label="Summaries" value={ws.summary_count} />
         </div>
 
+        <div className="ws-page-title">
+          <div />
+          <Link className="ws-btn primary" to={`/workspace/${ws.id}/library`}>
+            📚 Open Document Library
+          </Link>
+        </div>
+
         <section className="ws-panel">
           <UploadPdf workspaceId={ws.id} onUploaded={load} />
         </section>

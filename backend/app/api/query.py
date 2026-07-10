@@ -1,9 +1,12 @@
 from typing import Any, Dict, Optional
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
 from app.core.state import context_builder, pipeline
+from app.db.base import get_db
+from app.documents.repository import DocumentRepository
 from app.retrieval.filters import build_filter
 from app.services.answer_service import format_citations, generate_answer
 from app.services.embedding_service import generate_embedding
@@ -22,12 +25,19 @@ class QueryRequest(BaseModel):
 
 
 @router.post("")
-def query_knowledge(req: QueryRequest):
+def query_knowledge(req: QueryRequest, db: Session = Depends(get_db)):
     # Merge the top-level workspace_id into the filter dict (explicit filters win if both
     # set the field). This keeps the workspace boundary a first-class, easy-to-use param.
     filters = dict(req.filters or {})
     if req.workspace_id and "workspace_id" not in filters:
         filters["workspace_id"] = req.workspace_id
+
+    # Phase-3 Module-2: keep ARCHIVED / soft-deleted documents out of normal retrieval by
+    # excluding their vector ids. A cheap, indexed DB lookup; no mutation of the vector store.
+    if req.workspace_id and "exclude_document_id" not in filters:
+        hidden = DocumentRepository(db).list_excluded_vector_ids(req.workspace_id)
+        if hidden:
+            filters["exclude_document_id"] = hidden
 
     # Phase 1 — retrieval: query analysis -> dense + BM25 -> RRF -> rerank.
     result = pipeline.run(

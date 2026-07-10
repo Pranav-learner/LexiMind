@@ -6,6 +6,7 @@ from app.api.query import router as query_router
 from app.api.upload import router as upload_router
 from app.auth.api import router as auth_router
 from app.db.base import init_db
+from app.documents.api import router as document_router
 from app.workspaces.api import router as workspace_router
 
 app = FastAPI(title="LexiMind API")
@@ -29,6 +30,7 @@ def _startup() -> None:
 app.include_router(health_router)
 app.include_router(auth_router)
 app.include_router(workspace_router)
+app.include_router(document_router)
 app.include_router(upload_router)
 app.include_router(query_router)
 

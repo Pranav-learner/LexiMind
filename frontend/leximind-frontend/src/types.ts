@@ -58,3 +58,98 @@ export interface ListParams {
   sort_by?: SortField;
   order?: SortOrder;
 }
+
+// --------------------------------------------------------------- documents
+// NOTE: named `LibraryDocument` (never `Document`) to avoid shadowing the DOM global.
+
+export type ProcessingStatus = "uploaded" | "processing" | "ready" | "failed";
+export type ProcessingStage =
+  | "uploaded"
+  | "text_extraction"
+  | "chunking"
+  | "embedding"
+  | "faiss_indexing"
+  | "bm25_indexing"
+  | "metadata"
+  | "ready";
+export type IndexingStatus = "pending" | "indexed" | "stale" | "failed";
+
+export type DocumentSortField =
+  | "display_name"
+  | "created_at"
+  | "file_size"
+  | "page_count"
+  | "last_indexed_at"
+  | "updated_at";
+export type IndexedFilter = "any" | "indexed" | "unindexed";
+
+export interface LibraryDocument {
+  id: string;
+  workspace_id: string;
+  owner_id: string;
+  vector_document_id: string;
+  filename: string;
+  display_name: string;
+  description: string;
+  media_type: string;
+  file_type: string;
+  mime_type: string;
+  file_size: number;
+  page_count: number;
+  word_count: number;
+  chunk_count: number;
+  language: string;
+  embedding_model: string;
+  embedding_dimension: number;
+  processing_status: ProcessingStatus;
+  processing_stage: ProcessingStage;
+  processing_error: string | null;
+  processing_ms: number | null;
+  upload_progress: number;
+  indexing_status: IndexingStatus;
+  summary_status: string;
+  ocr_status: string;
+  is_archived: boolean;
+  last_indexed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface IndexHealth {
+  chunk_count: number;
+  embedding_count: number;
+  faiss_status: string;
+  bm25_status: string;
+  index_health: string;
+}
+
+export type LibraryDocumentDetail = LibraryDocument & {
+  index_health: IndexHealth | null;
+};
+
+export interface DocumentListResponse {
+  items: LibraryDocument[];
+  total: number;
+  page: number;
+  page_size: number;
+  pages: number;
+}
+
+export interface DocumentListParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  archived?: ArchivedFilter;
+  indexed?: IndexedFilter;
+  file_type?: string;
+  language?: string;
+  sort_by?: DocumentSortField;
+  order?: SortOrder;
+}
+
+export interface UploadItemResult {
+  filename: string;
+  success: boolean;
+  error: string | null;
+  document: LibraryDocument | null;
+}

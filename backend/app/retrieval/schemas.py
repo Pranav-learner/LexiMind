@@ -116,10 +116,20 @@ class RetrievalFilter:
     workspace: FilterValue = None
     source: FilterValue = None
     topic: FilterValue = None
+    # Phase-3 Module-2: NEGATIVE facet. A chunk whose document_id is in this set is excluded.
+    # Used to keep ARCHIVED documents out of normal retrieval without mutating the vector store.
+    exclude_document_id: FilterValue = None
 
     def is_empty(self) -> bool:
         return not any(
-            [self.document_id, self.workspace_id, self.workspace, self.source, self.topic]
+            [
+                self.document_id,
+                self.workspace_id,
+                self.workspace,
+                self.source,
+                self.topic,
+                self.exclude_document_id,
+            ]
         )
 
     @staticmethod
@@ -130,10 +140,21 @@ class RetrievalFilter:
             allowed = [allowed]
         return value in set(allowed)
 
+    @staticmethod
+    def _field_excludes(excluded: FilterValue, value: Any) -> bool:
+        """True if `value` is barred by an exclusion set (never bars when unset)."""
+        if excluded is None:
+            return False
+        if isinstance(excluded, str):
+            excluded = [excluded]
+        return value in set(excluded)
+
     def matches(self, meta: Dict[str, Any]) -> bool:
         # workspace_id matches against metadata["workspace_id"]; the legacy `workspace`
         # facet also matches metadata["workspace_id"] so old-style callers still filter.
         workspace_value = meta.get("workspace_id")
+        if self._field_excludes(self.exclude_document_id, meta.get("document_id")):
+            return False
         return (
             self._field_matches(self.document_id, meta.get("document_id"))
             and self._field_matches(self.workspace_id, workspace_value)

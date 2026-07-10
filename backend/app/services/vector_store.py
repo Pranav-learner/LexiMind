@@ -68,6 +68,43 @@ class VectorStore:
 
         return results
 
+    def count_where(self, predicate) -> int:
+        """Number of chunk records whose metadata satisfies `predicate(meta) -> bool`.
+
+        Used by the Document Library to report a document's live chunk/embedding count
+        without loading FAISS vectors.
+        """
+        return sum(1 for meta in self.metadata if predicate(meta))
+
+    def remove_where(self, predicate) -> int:
+        """Delete every chunk whose metadata satisfies `predicate` and rebuild the index.
+
+        FAISS's IndexFlatL2 has no cheap per-id delete, and the metadata list is positional,
+        so the safe operation is a rebuild: reconstruct the vectors we keep and re-add them to
+        a fresh index. Returns the number of chunks removed. Caller is responsible for
+        persisting (`save()`) and marking any dependent sparse index dirty.
+
+        Kept here so all FAISS access stays in this module; the documents layer never imports
+        faiss.
+        """
+        keep_positions = [i for i, meta in enumerate(self.metadata) if not predicate(meta)]
+        removed = len(self.metadata) - len(keep_positions)
+        if removed == 0:
+            return 0
+
+        new_index = faiss.IndexFlatL2(self.dimension)
+        if keep_positions:
+            # reconstruct_n needs a contiguous range; reconstruct kept vectors individually
+            # (correct regardless of gaps) and re-add them in one batch.
+            vectors = np.vstack(
+                [self.index.reconstruct(int(i)) for i in keep_positions]
+            ).astype("float32")
+            new_index.add(vectors)
+
+        self.index = new_index
+        self.metadata = [self.metadata[i] for i in keep_positions]
+        return removed
+
     def save(self):
         faiss.write_index(self.index, self.index_path)
 
@@ -76,4 +113,3 @@ class VectorStore:
 
         print(" Vector store saved to disk")
 
-        
