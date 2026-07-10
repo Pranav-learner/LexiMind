@@ -110,12 +110,17 @@ class RetrievalFilter:
     """
 
     document_id: FilterValue = None
+    # `workspace_id` is the Phase-3 canonical facet (matches metadata["workspace_id"]).
+    # `workspace` is kept as a legacy alias so pre-Phase-3 callers don't break.
+    workspace_id: FilterValue = None
     workspace: FilterValue = None
     source: FilterValue = None
     topic: FilterValue = None
 
     def is_empty(self) -> bool:
-        return not any([self.document_id, self.workspace, self.source, self.topic])
+        return not any(
+            [self.document_id, self.workspace_id, self.workspace, self.source, self.topic]
+        )
 
     @staticmethod
     def _field_matches(allowed: FilterValue, value: Any) -> bool:
@@ -126,9 +131,13 @@ class RetrievalFilter:
         return value in set(allowed)
 
     def matches(self, meta: Dict[str, Any]) -> bool:
+        # workspace_id matches against metadata["workspace_id"]; the legacy `workspace`
+        # facet also matches metadata["workspace_id"] so old-style callers still filter.
+        workspace_value = meta.get("workspace_id")
         return (
             self._field_matches(self.document_id, meta.get("document_id"))
-            and self._field_matches(self.workspace, meta.get("workspace"))
+            and self._field_matches(self.workspace_id, workspace_value)
+            and self._field_matches(self.workspace, meta.get("workspace", workspace_value))
             and self._field_matches(self.source, meta.get("source"))
             and self._field_matches(self.topic, meta.get("topic"))
         )

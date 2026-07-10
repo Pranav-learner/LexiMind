@@ -61,6 +61,7 @@ safetensors==0.7.0
 scikit-learn==1.8.0
 scipy==1.17.0
 sentence-transformers==5.2.2
+SQLAlchemy==2.0.51
 setuptools==81.0.0
 shellingham==1.5.4
 starlette==0.52.1

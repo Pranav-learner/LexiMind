@@ -13,18 +13,27 @@ router = APIRouter(prefix="/query", tags=["query"])
 
 class QueryRequest(BaseModel):
     question: str
-    # Optional metadata filters: {document_id|workspace|source|topic: str | [str]}
+    # Phase 3: scope the query to one workspace. Optional for backward compatibility — a
+    # request with no workspace_id searches the whole index exactly as before.
+    workspace_id: Optional[str] = None
+    # Optional metadata filters: {document_id|workspace_id|source|topic: str | [str]}
     filters: Optional[Dict[str, Any]] = None
     top_k: Optional[int] = None
 
 
 @router.post("")
 def query_knowledge(req: QueryRequest):
+    # Merge the top-level workspace_id into the filter dict (explicit filters win if both
+    # set the field). This keeps the workspace boundary a first-class, easy-to-use param.
+    filters = dict(req.filters or {})
+    if req.workspace_id and "workspace_id" not in filters:
+        filters["workspace_id"] = req.workspace_id
+
     # Phase 1 — retrieval: query analysis -> dense + BM25 -> RRF -> rerank.
     result = pipeline.run(
         req.question,
         embed_fn=generate_embedding,
-        filters=build_filter(req.filters),
+        filters=build_filter(filters),
         final_top_k=req.top_k,
     )
 

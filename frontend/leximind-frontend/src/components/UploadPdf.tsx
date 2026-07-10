@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { uploadPdf } from "../api/backend";
 
-export default function UploadPdf() {
+interface Props {
+  // Phase 3: bind uploads to a workspace so chunks are indexed with its workspace_id.
+  workspaceId?: string;
+  onUploaded?: () => void;
+}
+
+export default function UploadPdf({ workspaceId, onUploaded }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,9 +37,10 @@ export default function UploadPdf() {
     try {
       setLoading(true);
       setStatus("⏳ Uploading and indexing PDF...");
-      await uploadPdf(file);
+      await uploadPdf(file, workspaceId);
       setStatus("✅ PDF uploaded and indexed successfully");
       setFile(null);
+      onUploaded?.();
     } catch {
       setStatus("❌ Upload failed. Please try again.");
     } finally {

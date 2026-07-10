@@ -2,7 +2,12 @@ import { useState } from "react";
 import { askQuestion } from "../api/backend";
 import AnswerBox from "./AnswerBox";
 
-export default function AskQuestion() {
+interface Props {
+  // Phase 3: scope the question to a single workspace's chunks.
+  workspaceId?: string;
+}
+
+export default function AskQuestion({ workspaceId }: Props) {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [sources, setSources] = useState("");
@@ -18,7 +23,7 @@ export default function AskQuestion() {
       setAnswer("");
       setSources("");
 
-      const res = await askQuestion(question);
+      const res = await askQuestion(question, workspaceId);
 
       setAnswer(res.answer || "");
       setSources(res.sources || "");

@@ -6,11 +6,13 @@ type AnswerBoxProps = {
 export default function AnswerBox({ answer, sources }: AnswerBoxProps) {
   if (!answer) return null;
 
+  // Backend `format_citations` returns newline-separated lines like
+  // "[1] OS-Book.pdf | Page 12 | Section: Scheduling". Show each non-empty line.
   const sourceLines =
     sources
       ?.split("\n")
       .map((line) => line.trim())
-      .filter((line) => line.startsWith("-")) || [];
+      .filter((line) => line.length > 0) || [];
 
   return (
     <div
@@ -34,20 +36,17 @@ export default function AnswerBox({ answer, sources }: AnswerBoxProps) {
         {answer.trim()}
       </div>
 
-      {/* {sourceLines.length > 0 && (
+      {sourceLines.length > 0 && (
         <>
           <hr style={{ margin: "20px 0" }} />
           <h4>📚 Sources</h4>
-
           <ul>
             {sourceLines.map((line, index) => (
-              <li key={index}>
-                {line.replace("- ", "")}
-              </li>
+              <li key={index}>{line}</li>
             ))}
           </ul>
         </>
-      )} */}
+      )}
     </div>
   );
 }

@@ -26,12 +26,22 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def build_chunk_metadata(chunk: Dict[str, Any], *, filename: str, created_at: str) -> Dict[str, Any]:
-    """Produce the enriched, Phase-1 metadata record for a single chunk.
+def build_chunk_metadata(
+    chunk: Dict[str, Any],
+    *,
+    filename: str,
+    created_at: str,
+    workspace_id: str | None = None,
+) -> Dict[str, Any]:
+    """Produce the enriched metadata record for a single chunk.
 
     Schema (every chunk now guarantees these keys):
         chunk_id, document_id, source, filename, page_number, section,
-        topic, created_at, chunk_index, start_paragraph, end_paragraph, text
+        topic, created_at, chunk_index, start_paragraph, end_paragraph, text, workspace_id
+
+    Phase 3: `workspace_id` binds a chunk to its owning workspace so retrieval can isolate
+    results per workspace. It is nullable for backward compatibility — legacy chunks and
+    workspace-less uploads carry `None` (see scripts/migrate_workspace.py for the backfill).
     """
     document_id = derive_document_id(filename)
     chunk_index = chunk["chunk_index"]
@@ -41,6 +51,7 @@ def build_chunk_metadata(chunk: Dict[str, Any], *, filename: str, created_at: st
         "document_id": document_id,
         "source": filename,          # kept for backward compatibility with old records
         "filename": filename,
+        "workspace_id": workspace_id,
         "page_number": chunk["page_number"],
         "section": section,
         "section_heading": section,  # legacy alias still read by answer_service.format_sources
@@ -60,6 +71,8 @@ def ingest_pdf(
     filename: str,
     vector_store: VectorStore,
     bm25_retriever: BM25Retriever | None = None,
+    *,
+    workspace_id: str | None = None,
 ) -> Dict[str, Any]:
     """Full ingestion for one PDF. Returns a summary dict for the API response."""
     extracted_pages = extract_text_from_pdf(file_path)
@@ -70,6 +83,7 @@ def ingest_pdf(
         return {
             "filename": filename,
             "document_id": derive_document_id(filename),
+            "workspace_id": workspace_id,
             "pages_extracted": len(extracted_pages),
             "total_chunks": 0,
             "message": "No extractable text chunks found in PDF.",
@@ -80,7 +94,9 @@ def ingest_pdf(
     embeddings = generate_embeddings(texts)  # one batched encode call
 
     for chunk, embedding in zip(chunks, embeddings):
-        metadata = build_chunk_metadata(chunk, filename=filename, created_at=created_at)
+        metadata = build_chunk_metadata(
+            chunk, filename=filename, created_at=created_at, workspace_id=workspace_id
+        )
         vector_store.add(embedding, metadata)
 
     # Persist once per document (not once per chunk).
@@ -93,6 +109,7 @@ def ingest_pdf(
     return {
         "filename": filename,
         "document_id": derive_document_id(filename),
+        "workspace_id": workspace_id,
         "pages_extracted": len(extracted_pages),
         "total_chunks": len(chunks),
         "message": "PDF processed and indexed successfully",

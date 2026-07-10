@@ -79,5 +79,22 @@ class Settings:
     # Enable extractive compression to fit more evidence inside the budget.
     enable_compression: bool = field(default_factory=lambda: _env("LEXIMIND_ENABLE_COMPRESSION", "1") != "0")
 
+    # --- Phase 3 Module 1: workspaces + minimal auth ---
+    # SQLite is the project's first relational store. It holds structured domain rows
+    # (users, workspaces) that do NOT belong in the FAISS/JSON vector layer. Kept as a
+    # single embedded file so the system stays offline-first and zero-ops in dev.
+    database_url: str = field(
+        default_factory=lambda: _env(
+            "LEXIMIND_DATABASE_URL",
+            f"sqlite:///{BACKEND_DIR / 'leximind.db'}",
+        )
+    )
+    # Secret used to sign auth tokens (HMAC). MUST be overridden in production via env.
+    secret_key: str = field(default_factory=lambda: _env("LEXIMIND_SECRET_KEY", "dev-insecure-change-me"))
+    # Auth token lifetime (seconds). Default 7 days.
+    token_ttl_seconds: int = field(default_factory=lambda: _env_int("LEXIMIND_TOKEN_TTL", 7 * 24 * 3600))
+    # PBKDF2 iteration count for password hashing (stdlib hashlib, no external dep).
+    pbkdf2_iterations: int = field(default_factory=lambda: _env_int("LEXIMIND_PBKDF2_ITERS", 240_000))
+
 
 settings = Settings()
