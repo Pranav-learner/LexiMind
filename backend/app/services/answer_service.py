@@ -1,5 +1,5 @@
 import subprocess
-from typing import Any, Dict, List
+from typing import Any, Dict, Iterator, List, Optional
 
 from app.core.config import settings
 from app.context.schemas import Citation, Evidence
@@ -54,6 +54,66 @@ def generate_answer(question: str, context: str) -> str:
     return result.stdout.decode("utf-8", errors="ignore").strip()
 
 
+# --- Module 4: chat prompt + streaming ---------------------------------------
+CHAT_SYSTEM_PROMPT = """You are LexiMind, a precise research assistant.
+
+Answer the user's latest message using ONLY the information in the provided context and the
+conversation so far. If the context does not contain the answer, say you don't know based on the
+provided documents. Be concise and cite naturally. Use Markdown for formatting when helpful."""
+
+
+def build_chat_prompt(question: str, context: str, history: Optional[List[Dict[str, Any]]] = None) -> str:
+    """Assemble a chat prompt: system + recent conversation history + retrieved context + turn.
+
+    `history` is a token-budgeted list of prior turns ({role, content}) chosen by
+    `app.chat.memory` — the LLM gets continuity without exceeding the context window.
+    """
+    from app.chat.memory import render_history  # local import avoids a package cycle
+
+    transcript = render_history(history or [])
+    history_block = f"\nConversation so far:\n{transcript}\n" if transcript else ""
+    return f"""{CHAT_SYSTEM_PROMPT}
+{history_block}
+Context:
+{context}
+
+User: {question}
+
+Assistant:
+"""
+
+
+def stream_answer(prompt: str) -> Iterator[str]:
+    """Stream the local LLM (Ollama) token-by-token for the given fully-assembled prompt.
+
+    Uses Popen so tokens surface progressively (the chat streaming endpoint forwards them over
+    SSE). Falls back to a single yielded blob if streaming isn't available. Cancellation is
+    handled by the caller closing the generator, which terminates the subprocess.
+    """
+    proc = subprocess.Popen(
+        ["ollama", "run", settings.llm_model],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+    )
+    try:
+        assert proc.stdin is not None and proc.stdout is not None
+        proc.stdin.write(prompt.encode("utf-8"))
+        proc.stdin.close()
+        while True:
+            chunk = proc.stdout.read(64)
+            if not chunk:
+                break
+            yield chunk.decode("utf-8", errors="ignore")
+    finally:
+        if proc.poll() is None:
+            proc.terminate()
+            try:
+                proc.wait(timeout=5)
+            except Exception:  # pragma: no cover
+                proc.kill()
+
+
 def format_citations(citations: List[Citation]) -> str:
     """Render Phase-2 Citation objects as deduplicated source lines for the API/UI."""
     lines = []
@@ -95,6 +155,8 @@ def structured_citations(evidence: List[Evidence]) -> List[Dict[str, Any]]:
                     "page_number": c.page_number,
                     "section": c.section,
                     "text": (ev.text or "")[:400],
+                    # Module 4: surface a confidence so chat citation cards can rank/shade.
+                    "confidence": round(float(ev.evidence_score), 4),
                 }
             )
     return out

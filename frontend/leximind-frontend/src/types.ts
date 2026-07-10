@@ -217,3 +217,106 @@ export interface QueryResponse {
   retrieval?: unknown;
   context?: unknown;
 }
+
+// ------------------------------------------------------------------- chat
+// Contracts for the Persistent AI Chat Workspace (Phase 3, Module 4). Mirror the
+// backend conversation / message / citation DTOs. NOTE: the message type is named
+// `ChatMessage` (never `Message`) to avoid shadowing the DOM global.
+
+export interface Conversation {
+  id: string;
+  workspace_id: string;
+  owner_id: string;
+  title: string;
+  description: string;
+  is_pinned: boolean;
+  is_archived: boolean;
+  message_count: number;
+  last_message_at: string | null;
+  document_scope: string[] | null;
+  temperature: number;
+  model_name: string;
+  system_prompt_version: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export type ChatRole = "user" | "assistant" | "system";
+
+// A citation attached to an assistant message. NOTE: `document_id` is the VECTOR
+// document id (resolve via GET .../documents/by-vector/{document_id}).
+export interface ChatCitation {
+  id: string;
+  document_id: string;
+  chunk_id: string;
+  page_number: number;
+  workspace_id: string;
+  citation_text: string;
+  confidence: number;
+}
+
+export interface ChatMessage {
+  id: string;
+  conversation_id: string;
+  role: ChatRole;
+  content: string;
+  token_usage: unknown;
+  latency_ms: number | null;
+  retrieval_ms: number | null;
+  context_size: number | null;
+  citation_count: number;
+  meta: { status?: string; [key: string]: unknown } | null;
+  created_at: string;
+  citations: ChatCitation[];
+}
+
+export interface ConversationListResponse {
+  items: Conversation[];
+  total: number;
+  page: number;
+  page_size: number;
+  pages: number;
+}
+
+export interface MessageListResponse {
+  items: ChatMessage[];
+  total: number;
+  page: number;
+  page_size: number;
+  pages: number;
+}
+
+export type ConversationArchivedFilter = "active" | "archived" | "all";
+export type ConversationPinnedFilter = "any" | "pinned";
+export type ConversationSortField =
+  | "last_message_at"
+  | "created_at"
+  | "updated_at"
+  | "title";
+
+export interface ConversationListParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  archived?: ConversationArchivedFilter;
+  pinned?: ConversationPinnedFilter;
+  sort_by?: ConversationSortField;
+  order?: SortOrder;
+}
+
+export interface ConversationCreateInput {
+  title?: string;
+  description?: string;
+  document_scope?: string[];
+  temperature?: number;
+  model_name?: string;
+}
+
+export type ConversationUpdateInput = ConversationCreateInput;
+
+// SSE events streamed by POST /conversations/{id}/messages/stream.
+export type ChatStreamEvent =
+  | { type: "user"; data: ChatMessage }
+  | { type: "token"; data: { text: string } }
+  | { type: "done"; data: ChatMessage }
+  | { type: "error"; data: { message?: string; error: string } };

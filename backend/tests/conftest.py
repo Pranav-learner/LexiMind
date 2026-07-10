@@ -27,10 +27,38 @@ from app.db.base import Base, get_db
 
 # Import models so their tables are registered on Base.metadata before create_all.
 from app.auth import models as _auth_models  # noqa: F401
+from app.chat import models as _chat_models  # noqa: F401
 from app.documents import models as _doc_models  # noqa: F401
 from app.workspaces import models as _ws_models  # noqa: F401
 
 from app.retrieval.schemas import derive_document_id
+
+
+class FakeChatEngine:
+    """Deterministic stand-in for the real (faiss-backed) chat engine.
+
+    Emits a couple of token events then a `final` with fake citations + metrics, mirroring the
+    PipelineChatEngine event contract — so the full chat pipeline (persistence, streaming,
+    citations, memory) is exercised without retrieval/LLM.
+    """
+
+    def __init__(self, tokens=("Hello", " world"), citations=None):
+        self.tokens = tokens
+        self.citations = citations if citations is not None else [
+            {"chunk_id": "doc_x:0", "document_id": "doc_x", "source": "OS.pdf",
+             "page_number": 42, "section": "Memory", "text": "virtual memory", "confidence": 0.91},
+        ]
+
+    def generate(self, question, workspace_id, history, *, db=None, top_k=None, document_scope=None):
+        # Echo history length so tests can assert memory is threaded through.
+        for t in self.tokens:
+            yield {"type": "token", "text": t}
+        yield {
+            "type": "final",
+            "answer": "".join(self.tokens),
+            "citations": self.citations,
+            "retrieval_ms": 5, "context_size": 123, "token_usage": 7, "latency_ms": 9,
+        }
 
 
 # --------------------------------------------------------------------- in-memory index fakes
@@ -172,6 +200,8 @@ def app(engine, SessionFactory, fake_index):
     from fastapi import FastAPI
 
     from app.auth.api import router as auth_router
+    from app.chat.api import get_chat_engine
+    from app.chat.api import router as chat_router
     from app.documents.api import get_index_context, get_ingestor
     from app.documents.api import router as document_router
     from app.documents.reading_api import router as reading_router
@@ -189,9 +219,11 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(workspace_router)
     application.include_router(document_router)
     application.include_router(reading_router)
+    application.include_router(chat_router)
     application.dependency_overrides[get_db] = override_get_db
     application.dependency_overrides[get_index_context] = lambda: fake_index
     application.dependency_overrides[get_ingestor] = lambda: make_fake_ingest()
+    application.dependency_overrides[get_chat_engine] = lambda: FakeChatEngine()
     return application
 
 

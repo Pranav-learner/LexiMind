@@ -14,6 +14,7 @@ const WorkspacesDashboard = lazy(() => import("./pages/WorkspacesDashboard"));
 const WorkspaceDetail = lazy(() => import("./pages/WorkspaceDetail"));
 const DocumentsLibrary = lazy(() => import("./pages/DocumentsLibrary"));
 const PdfViewer = lazy(() => import("./pages/PdfViewer"));
+const ChatWorkspace = lazy(() => import("./pages/ChatWorkspace"));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -70,6 +71,22 @@ export default function App() {
           element={
             <RequireAuth>
               <PdfViewer />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/workspace/:workspaceId/chat"
+          element={
+            <RequireAuth>
+              <ChatWorkspace />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/workspace/:workspaceId/chat/:conversationId"
+          element={
+            <RequireAuth>
+              <ChatWorkspace />
             </RequireAuth>
           }
         />

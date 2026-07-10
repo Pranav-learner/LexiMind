@@ -110,5 +110,11 @@ class Settings:
         )
     )
 
+    # --- Phase 3 Module 4: Persistent AI Chat Workspace ---
+    # Token-aware conversation memory: how much of the prior conversation to feed the LLM. Kept
+    # well under the context window so retrieved context + the answer always fit.
+    chat_history_token_budget: int = field(default_factory=lambda: _env_int("LEXIMIND_CHAT_HISTORY_TOKENS", 1500))
+    chat_history_max_messages: int = field(default_factory=lambda: _env_int("LEXIMIND_CHAT_HISTORY_MAX_MSGS", 20))
+
 
 settings = Settings()

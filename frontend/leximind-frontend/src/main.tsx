@@ -5,6 +5,7 @@ import './index.css'
 import './styles/workspace.css'
 import './styles/document.css'
 import './styles/viewer.css'
+import './styles/chat.css'
 import App from './App.tsx'
 import { AuthProvider } from './context/AuthContext'
 

@@ -69,9 +69,14 @@ export default function WorkspaceDetail() {
 
         <div className="ws-page-title">
           <div />
-          <Link className="ws-btn primary" to={`/workspace/${ws.id}/library`}>
-            📚 Open Document Library
-          </Link>
+          <div style={{ display: "flex", gap: 10 }}>
+            <Link className="ws-btn primary" to={`/workspace/${ws.id}/chat`}>
+              💬 Open Chat
+            </Link>
+            <Link className="ws-btn primary" to={`/workspace/${ws.id}/library`}>
+              📚 Open Document Library
+            </Link>
+          </div>
         </div>
 
         <section className="ws-panel">
