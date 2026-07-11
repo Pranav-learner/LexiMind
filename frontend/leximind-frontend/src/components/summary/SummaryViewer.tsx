@@ -285,6 +285,7 @@ export default function SummaryViewer({
           <button className="ws-btn ghost" onClick={copyAll} disabled={generating} title="Copy all">📋 Copy</button>
           <button className="ws-btn ghost" onClick={handleExport} disabled={generating} title="Export as Markdown">⬇ Export</button>
           <button className="ws-btn ghost" onClick={handleConvertToNotes} disabled={busy || generating} title="Convert to editable notes">📝 To notes</button>
+          <button className="ws-btn ghost" onClick={() => navigate(`/workspace/${ws}/flashcards`, { state: { makeFlashcards: { summary_id: summaryId } } })} disabled={generating} title="Generate flashcards">🎴 Flashcards</button>
           <button className="ws-btn ghost" onClick={() => window.print()} disabled={generating} title="Print">🖨 Print</button>
           <button className="ws-btn ghost" onClick={handleRegenerate} disabled={busy || generating} title="Regenerate">🔄 Regenerate</button>
           <button className="ws-btn ghost" onClick={handleDuplicate} disabled={busy} title="Duplicate">📑 Duplicate</button>

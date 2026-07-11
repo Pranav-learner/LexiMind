@@ -286,6 +286,13 @@ export default function NoteEditorPage() {
             {readOnly ? "✏️ Edit" : "👁 Read"}
           </button>
           <button className="ws-btn ghost" onClick={handleExport} title="Export as Markdown">⬇ Export</button>
+          <button
+            className="ws-btn ghost"
+            title="Generate flashcards from this note"
+            onClick={() => navigate(`/workspace/${workspaceId}/flashcards`, { state: { makeFlashcards: { note_id: noteId } } })}
+          >
+            🎴 Flashcards
+          </button>
           <button className="ws-btn ghost doc-danger-btn" onClick={handleDelete} title="Delete note">🗑</button>
         </div>
       </header>

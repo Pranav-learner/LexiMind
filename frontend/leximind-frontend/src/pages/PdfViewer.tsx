@@ -21,6 +21,7 @@ import { useReadingSession, readCachedSession } from "../components/viewer/useRe
 import type { ViewerActionType } from "../components/viewer/actions";
 import * as viewerApi from "../api/viewer";
 import { createNote } from "../api/notes";
+import { generateDeck } from "../api/flashcards";
 import type { QueryCitation } from "../types";
 
 const MIN_SCALE = 0.25;
@@ -279,7 +280,17 @@ function ViewerInner({
           );
           break;
         case "flashcard":
-          showToast("Flashcards — coming soon");
+          // Module 7: generate a small deck focused on the selected text (document-scoped), open it.
+          showToast("Generating flashcards…");
+          generateDeck(ws, {
+            scope: "document",
+            document_id: docId,
+            subject: trimmed.slice(0, 300),
+            count: 8,
+          }).then(
+            (deck) => navigate(`/workspace/${ws}/flashcards/deck/${deck.id}`),
+            () => showToast("Could not generate flashcards"),
+          );
           break;
         case "summary":
           showToast("Summaries — coming soon");

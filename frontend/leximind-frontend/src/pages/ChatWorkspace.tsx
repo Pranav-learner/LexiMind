@@ -140,6 +140,14 @@ function ChatWindow({ ws, conversationId, onCitation, onActivity }: WindowProps)
     [ws, navigate],
   );
 
+  // Module 7: generate a flashcard deck from this conversation (routed through the flashcards page).
+  const makeFlashcards = useCallback(
+    (m: ChatMessageType) => {
+      navigate(`/workspace/${ws}/flashcards`, { state: { makeFlashcards: { conversation_id: m.conversation_id } } });
+    },
+    [ws, navigate],
+  );
+
   // Load the conversation metadata for the header.
   const loadConv = useCallback(() => {
     let alive = true;
@@ -277,6 +285,7 @@ function ChatWindow({ ws, conversationId, onCitation, onActivity }: WindowProps)
                 onEdit={m.role === "user" && !streaming ? editMessage : undefined}
                 onRetry={m.role === "user" ? retry : undefined}
                 onSaveAsNote={m.role === "assistant" ? saveAsNote : undefined}
+                onFlashcards={m.role === "assistant" ? makeFlashcards : undefined}
               />
             ))
           )}

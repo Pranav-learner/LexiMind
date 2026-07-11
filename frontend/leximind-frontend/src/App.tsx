@@ -18,6 +18,9 @@ const ChatWorkspace = lazy(() => import("./pages/ChatWorkspace"));
 const SummariesDashboard = lazy(() => import("./pages/SummariesDashboard"));
 const NotesDashboard = lazy(() => import("./pages/NotesDashboard"));
 const NoteEditorPage = lazy(() => import("./pages/NoteEditorPage"));
+const FlashcardsDashboard = lazy(() => import("./pages/FlashcardsDashboard"));
+const DeckView = lazy(() => import("./pages/DeckView"));
+const ReviewSession = lazy(() => import("./pages/ReviewSession"));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -122,6 +125,30 @@ export default function App() {
           element={
             <RequireAuth>
               <NoteEditorPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/workspace/:workspaceId/flashcards"
+          element={
+            <RequireAuth>
+              <FlashcardsDashboard />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/workspace/:workspaceId/flashcards/deck/:deckId"
+          element={
+            <RequireAuth>
+              <DeckView />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/workspace/:workspaceId/flashcards/review"
+          element={
+            <RequireAuth>
+              <ReviewSession />
             </RequireAuth>
           }
         />

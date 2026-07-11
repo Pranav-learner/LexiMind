@@ -80,7 +80,7 @@ export function getDeckStats(ws: string, id: string) {
 }
 
 // --- cards ---
-export function listCards(ws: string, params: { deck_id?: string; page?: number; page_size?: number; search?: string; card_type?: string; status?: string; favorite?: boolean } = {}, signal?: AbortSignal) {
+export function listCards(ws: string, params: { deck_id?: string; page?: number; page_size?: number; search?: string; card_type?: string; status?: string; favorite?: boolean; sort_by?: string; order?: string } = {}, signal?: AbortSignal) {
   const q = new URLSearchParams();
   Object.entries(params).forEach(([k, v]) => { if (v !== undefined && v !== "") q.set(k, String(v)); });
   const s = q.toString();

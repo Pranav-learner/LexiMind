@@ -20,6 +20,7 @@ interface Props {
   onRetry?: (message: ChatMessageType) => void;
   onCitation: (c: ChatCitation) => void;
   onSaveAsNote?: (message: ChatMessageType) => void; // Module 6: persist an answer as a Note
+  onFlashcards?: (message: ChatMessageType) => void; // Module 7: generate flashcards from the chat
 }
 
 function ChatMessageBase({
@@ -31,6 +32,7 @@ function ChatMessageBase({
   onRetry,
   onCitation,
   onSaveAsNote,
+  onFlashcards,
 }: Props) {
   const isUser = message.role === "user";
   const isError = message.meta?.status === "error";
@@ -128,6 +130,11 @@ function ChatMessageBase({
             {!isUser && !isError && onSaveAsNote && message.content && (
               <button className="chat-act" title="Save this answer as a note" aria-label="Save as note" onClick={() => onSaveAsNote(message)}>
                 📝 Save as note
+              </button>
+            )}
+            {!isUser && !isError && onFlashcards && message.content && (
+              <button className="chat-act" title="Generate flashcards from this chat" aria-label="Generate flashcards" onClick={() => onFlashcards(message)}>
+                🎴 Flashcards
               </button>
             )}
           </div>
