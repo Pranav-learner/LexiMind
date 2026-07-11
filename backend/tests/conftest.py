@@ -309,6 +309,7 @@ def app(engine, SessionFactory, fake_index):
     from app.mmretrieval.api import router as mmsearch_router
     from app.mmretrieval.retrievers import LexicalTextRetriever
     from app.mmcontext.api import router as mmcontext_router
+    from app.mmworkspace.api import router as mmworkspace_router
     from app.notes.api import get_notes_engine, get_notes_runner
     from app.notes.api import router as notes_router
     from app.notes.api import tag_router as notes_tag_router
@@ -341,6 +342,7 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(vision_router)
     application.include_router(mmsearch_router)
     application.include_router(mmcontext_router)
+    application.include_router(mmworkspace_router)
     application.dependency_overrides[get_db] = override_get_db
     application.dependency_overrides[get_index_context] = lambda: fake_index
     application.dependency_overrides[get_ingestor] = lambda: make_fake_ingest()

@@ -1,0 +1,54 @@
+/* Multimodal AI Workspace hub (Phase 4, Module 5). Reuses shared tokens + search-chip style.
+   Theme-aware via variables. */
+
+.mw-body { padding: 20px 24px 48px; max-width: 1240px; margin: 0 auto; width: 100%; }
+.mw-muted { font-size: 12.5px; color: var(--text-muted); }
+
+.mw-toast { position: fixed; top: 76px; left: 50%; transform: translateX(-50%); z-index: 60;
+  background: var(--surface); border: 1px solid var(--primary); color: var(--text); padding: 10px 16px;
+  border-radius: 999px; box-shadow: var(--shadow); font-size: 13px; animation: mw-fade 4s forwards; }
+@keyframes mw-fade { 0%,85% { opacity: 1; } 100% { opacity: 0; } }
+
+/* overview tiles */
+.mw-overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(108px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.mw-tile { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+.mw-tile-icon { font-size: 16px; }
+.mw-tile-value { font-size: 22px; font-weight: 800; color: var(--text); }
+.mw-tile-label { font-size: 11px; color: var(--text-muted); }
+
+/* upload center */
+.mw-upload { display: flex; align-items: center; gap: 16px; padding: 20px 24px; border: 2px dashed var(--border);
+  border-radius: 16px; background: var(--surface); cursor: pointer; transition: border-color .15s, background .15s; margin-bottom: 20px; }
+.mw-upload:hover { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 5%, transparent); }
+.mw-upload-icon { font-size: 32px; }
+.mw-upload strong { font-size: 15px; color: var(--text); }
+.mw-upload p { font-size: 12.5px; color: var(--text-muted); margin: 3px 0 0; line-height: 1.4; }
+
+/* two-column layout */
+.mw-columns { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 20px; }
+.mw-explorer-head { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+.mw-explorer-head h2, .mw-timeline h2 { font-size: 16px; font-weight: 700; color: var(--text); margin: 0; }
+.mw-filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.mw-count { font-size: 10px; opacity: .8; }
+
+.mw-asset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.mw-asset { --m: var(--primary); position: relative; border: 1px solid var(--border); border-left: 3px solid var(--m);
+  border-radius: 10px; background: var(--surface); overflow: hidden; }
+.mw-asset-main { display: flex; gap: 10px; padding: 12px; cursor: pointer; align-items: center; }
+.mw-asset-main:hover { background: var(--surface-2); }
+.mw-asset-icon { font-size: 24px; width: 40px; text-align: center; flex-shrink: 0; }
+.mw-asset-thumb { width: 40px; height: 40px; border-radius: 8px; overflow: hidden; background: var(--surface-2); display: grid; place-items: center; flex-shrink: 0; }
+.mw-asset-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.mw-asset-body { min-width: 0; flex: 1; }
+.mw-asset-title { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: capitalize; }
+.mw-asset-sub { font-size: 11.5px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mw-asset-actions { position: absolute; top: 8px; right: 8px; }
+
+/* timeline */
+.mw-timeline ul { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 1px; }
+.mw-timeline li { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 12.5px; color: var(--text); }
+.mw-timeline li:hover { background: var(--surface-2); }
+.mw-tl-icon { font-size: 14px; width: 20px; text-align: center; }
+.mw-tl-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+@media (max-width: 900px) { .mw-columns { grid-template-columns: 1fr; } .mw-timeline { order: -1; } }

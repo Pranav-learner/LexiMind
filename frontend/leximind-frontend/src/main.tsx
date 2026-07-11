@@ -14,6 +14,7 @@ import './styles/dashboard.css'
 import './styles/ingestion.css'
 import './styles/search.css'
 import './styles/context.css'
+import './styles/mmworkspace.css'
 import App from './App.tsx'
 import { AuthProvider } from './context/AuthContext'
 

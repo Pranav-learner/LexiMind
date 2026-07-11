@@ -68,9 +68,12 @@ export default function WorkspaceDetail() {
         </div>
 
         <div className="ws-page-title">
-          <div>
+          <div style={{ display: "flex", gap: 10 }}>
+            <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/ai`}>
+              ✨ AI Workspace
+            </Link>
             <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/dashboard`}>
-              📊 Open Dashboard
+              📊 Dashboard
             </Link>
           </div>
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>

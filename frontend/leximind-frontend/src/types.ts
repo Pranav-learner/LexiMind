@@ -1382,3 +1382,80 @@ export interface ContextObservability {
   intent_usage: Record<string, number>;
   recent: Array<Record<string, unknown>>;
 }
+
+// ----------------------------------------------------------------- multimodal workspace (capstone)
+// Contracts for the Multimodal AI Workspace (Phase 4, Module 5) — the unified product surface.
+
+export interface IngestItemResult {
+  filename: string;
+  success: boolean;
+  error: string | null;
+  document_id: string | null;
+  display_name: string | null;
+  processing_job_id: string | null;
+  vision_job_id: string | null;
+  media_kind: string | null;
+}
+
+export interface IngestResponse {
+  uploaded: number;
+  failed: number;
+  items: IngestItemResult[];
+}
+
+export interface WorkspaceAsset {
+  id: string;
+  asset_type: string;
+  modality: string;
+  title: string;
+  subtitle: string;
+  document_id: string | null;
+  page_number: number | null;
+  created_at: string | null;
+  route: string | null;
+  thumbnail_url: string | null;
+  metadata: Record<string, unknown>;
+}
+
+export interface AssetExplorerResponse {
+  items: WorkspaceAsset[];
+  total: number;
+  counts: Record<string, number>;
+}
+
+export interface WorkspaceTimelineEvent {
+  type: string;
+  icon: string;
+  title: string;
+  timestamp: string | null;
+  route: string | null;
+  target_id: string | null;
+}
+
+export interface PipelineStatus {
+  document_id: string;
+  display_name: string;
+  text_indexed: boolean;
+  processing: Record<string, unknown> | null;
+  vision: Record<string, unknown> | null;
+  counts: Record<string, number>;
+  ready: boolean;
+}
+
+export interface AiActionResponse {
+  action: string;
+  asset_type: string;
+  asset_id: string;
+  status: string;
+  route: string;
+}
+
+export interface WorkspaceOverview {
+  workspace_id: string;
+  name: string;
+  assets: Record<string, number>;
+  modalities: Record<string, number>;
+  pipelines: Record<string, number>;
+  activity: Record<string, number>;
+  ready_documents: number;
+}

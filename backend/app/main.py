@@ -15,6 +15,7 @@ from app.flashcards.api import router as flashcards_router
 from app.ingestion.api import router as ingestion_router
 from app.mmcontext.api import router as mmcontext_router
 from app.mmretrieval.api import router as mmsearch_router
+from app.mmworkspace.api import router as mmworkspace_router
 from app.vision.api import router as vision_router
 from app.notes.api import router as notes_router
 from app.notes.api import tag_router as notes_tag_router
@@ -55,6 +56,7 @@ app.include_router(ingestion_router)
 app.include_router(vision_router)
 app.include_router(mmsearch_router)
 app.include_router(mmcontext_router)
+app.include_router(mmworkspace_router)
 app.include_router(upload_router)
 app.include_router(query_router)
 
