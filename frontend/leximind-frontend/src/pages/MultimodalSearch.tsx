@@ -53,7 +53,7 @@ export default function MultimodalSearch() {
   function toggleFilter(m: SearchModality) {
     setFilters((prev) => {
       const next = new Set(prev);
-      next.has(m) ? next.delete(m) : next.add(m);
+      if (next.has(m)) next.delete(m); else next.add(m);
       return next;
     });
   }
