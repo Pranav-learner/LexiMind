@@ -9,6 +9,7 @@ import * as api from "../../api/documents";
 import { ApiError } from "../../api/client";
 import type { LibraryDocument, LibraryDocumentDetail } from "../../types";
 import { fileIcon, humanSize, relativeTime } from "./constants";
+import ProcessingPanel from "./ProcessingPanel";
 
 interface Props {
   workspaceId: string;
@@ -255,6 +256,10 @@ export default function DocumentDetailDrawer({
               <button className="ws-btn ghost" disabled title="Coming soon">💬 Chat</button>
               <button className="ws-btn ghost" disabled title="Coming soon">🎴 Flashcards</button>
             </div>
+          </Section>
+
+          <Section title="Multimodal processing">
+            <ProcessingPanel workspaceId={workspaceId} documentId={doc.id} />
           </Section>
         </div>
       </aside>

@@ -1,0 +1,52 @@
+/* Multimodal Document Processing (Phase 4, Module 1). Reuses shared tokens (--primary, --border,
+   --surface, --surface-2, --text, --text-muted, --danger, --radius) — lives inside the document
+   detail drawer. Theme-aware via the shared variables. */
+
+.mm-panel { display: flex; flex-direction: column; gap: 10px; }
+.mm-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.mm-head h4 { margin: 0; font-size: 13px; font-weight: 700; color: var(--text); }
+.mm-muted { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin: 0; }
+.ws-btn.sm { padding: 5px 12px; font-size: 12.5px; }
+.ws-error-banner.sm { font-size: 12px; padding: 6px 8px; }
+
+.mm-status-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.mm-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px;
+  background: var(--surface-2); color: var(--text-muted); }
+.mm-badge.processing, .mm-badge.queued { color: #b45309; background: color-mix(in srgb, #f59e0b 18%, transparent); }
+.mm-badge.completed { color: #059669; background: color-mix(in srgb, #10b981 16%, transparent); }
+.mm-badge.failed { color: var(--danger); background: color-mix(in srgb, var(--danger) 16%, transparent); }
+.mm-badge.cancelled { color: var(--text-muted); }
+.mm-progress { flex: 1; min-width: 80px; height: 6px; border-radius: 20px; background: var(--surface-2); overflow: hidden; }
+.mm-progress-bar { height: 100%; background: linear-gradient(90deg, #6366f1, #8b5cf6); border-radius: 20px; transition: width .3s; }
+
+.mm-classify { display: flex; flex-wrap: wrap; gap: 6px; }
+.mm-chip { font-size: 11px; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--border);
+  color: var(--text-muted); background: var(--surface-2); text-transform: capitalize; }
+
+.mm-counts { display: grid; grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); gap: 8px; }
+.mm-count { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 8px 4px;
+  border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+.mm-count-icon { font-size: 14px; }
+.mm-count-value { font-size: 17px; font-weight: 800; color: var(--text); }
+.mm-count-label { font-size: 10px; color: var(--text-muted); text-align: center; }
+
+.mm-assets { display: flex; flex-direction: column; gap: 6px; }
+.mm-asset { padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface-2); }
+.mm-asset-head { font-size: 12px; font-weight: 600; color: var(--text); }
+.mm-asset-cap, .mm-table-headers { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+.mm-table-headers { font-family: ui-monospace, Menlo, monospace; }
+
+.mm-ocr { font-size: 12px; }
+.mm-ocr summary { cursor: pointer; color: var(--primary); font-weight: 600; }
+.mm-ocr-page { font-size: 11.5px; color: var(--text-muted); margin-top: 6px; line-height: 1.4; }
+.mm-ocr-page strong { color: var(--text); }
+
+.mm-logs-toggle { align-self: flex-start; background: none; border: none; color: var(--text-muted);
+  font-size: 12px; cursor: pointer; padding: 2px 0; }
+.mm-logs { display: flex; flex-direction: column; gap: 3px; max-height: 160px; overflow-y: auto;
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px; background: var(--surface-2); }
+.mm-log { font-size: 11.5px; color: var(--text-muted); line-height: 1.4; }
+.mm-log.lvl-error { color: var(--danger); }
+.mm-log.lvl-warn { color: #b45309; }
+.mm-log-stage { font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; margin-right: 6px; }

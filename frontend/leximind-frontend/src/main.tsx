@@ -11,6 +11,7 @@ import './styles/notes.css'
 import './styles/flashcards.css'
 import './styles/citations.css'
 import './styles/dashboard.css'
+import './styles/ingestion.css'
 import App from './App.tsx'
 import { AuthProvider } from './context/AuthContext'
 

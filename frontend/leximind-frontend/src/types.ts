@@ -1061,3 +1061,109 @@ export interface DashboardOverview {
   activity: { items: DashActivityEvent[] };
   insights: DashInsight[];
 }
+
+// ----------------------------------------------------------------- multimodal ingestion
+// Contracts for the Multimodal Document Processing Engine (Phase 4, Module 1). Processing is
+// asynchronous: POST .../process returns a queued/processing job; poll .../processing until terminal.
+
+export type ProcessingStatusT = "queued" | "processing" | "completed" | "failed" | "cancelled";
+
+export interface ProcessingJob {
+  id: string;
+  workspace_id: string;
+  document_id: string;
+  status: ProcessingStatusT;
+  stage: string;
+  progress: number;
+  error: string | null;
+  attempts: number;
+  doc_type: string;
+  processing_type: string;
+  ocr_language: string;
+  ocr_confidence: number | null;
+  page_count: number;
+  image_count: number;
+  table_count: number;
+  figure_count: number;
+  chunk_count: number;
+  ocr_pages: number;
+  processing_ms: number;
+  pipeline_version: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProcessingLog {
+  stage: string;
+  level: string;
+  message: string;
+  created_at: string;
+}
+
+export type ProcessingJobDetail = ProcessingJob & { logs: ProcessingLog[] };
+
+export interface ExtractedImage {
+  id: string;
+  page_number: number;
+  bbox: number[] | null;
+  width: number;
+  height: number;
+  image_type: string;
+  caption: string | null;
+  confidence: number | null;
+  hash: string;
+}
+
+export interface ExtractedTable {
+  id: string;
+  page_number: number;
+  bbox: number[] | null;
+  n_rows: number;
+  n_cols: number;
+  headers: unknown[] | null;
+  cells: unknown[] | null;
+  caption: string | null;
+}
+
+export interface ExtractedFigure {
+  id: string;
+  page_number: number;
+  bbox: number[] | null;
+  figure_type: string;
+  caption: string | null;
+  hash: string;
+}
+
+export interface ExtractedAssets {
+  images: ExtractedImage[];
+  tables: ExtractedTable[];
+  figures: ExtractedFigure[];
+}
+
+export interface MultimodalChunk {
+  id: string;
+  page_number: number;
+  chunk_type: "text" | "ocr" | "image" | "table" | "figure";
+  source: string;
+  chunk_index: number;
+  asset_id: string | null;
+  bbox: number[] | null;
+  content: string;
+  meta: Record<string, unknown> | null;
+  embedding_status: string;
+}
+
+export interface OcrPage {
+  page_number: number;
+  text: string;
+  confidence: number | null;
+  language: string;
+}
+
+export interface OcrStatus {
+  document_id: string;
+  ocr_pages: number;
+  language: string;
+  avg_confidence: number | null;
+  pages: OcrPage[];
+}

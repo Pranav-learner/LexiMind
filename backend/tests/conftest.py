@@ -32,6 +32,7 @@ from app.chat import models as _chat_models  # noqa: F401
 from app.citations import models as _cite_models  # noqa: F401
 from app.documents import models as _doc_models  # noqa: F401
 from app.flashcards import models as _fc_models  # noqa: F401
+from app.ingestion import models as _ing_models  # noqa: F401
 from app.notes import models as _note_models  # noqa: F401
 from app.summaries import models as _sum_models  # noqa: F401
 from app.workspaces import models as _ws_models  # noqa: F401
@@ -293,6 +294,10 @@ def app(engine, SessionFactory, fake_index):
     from app.flashcards.api import get_flashcards_runner
     from app.flashcards.api import router as flashcards_router
     from app.flashcards.runner import InlineRunner as FlashcardInlineRunner
+    from app.ingestion.api import get_ingestion_runner
+    from app.ingestion.api import router as ingestion_router
+    from app.ingestion.engines import FakeMultimodalEngine
+    from app.ingestion.runner import InlineRunner as IngestionInlineRunner
     from app.notes.api import get_notes_engine, get_notes_runner
     from app.notes.api import router as notes_router
     from app.notes.api import tag_router as notes_tag_router
@@ -321,6 +326,7 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(flashcards_router)
     application.include_router(citations_router)
     application.include_router(analytics_router)
+    application.include_router(ingestion_router)
     application.dependency_overrides[get_db] = override_get_db
     application.dependency_overrides[get_index_context] = lambda: fake_index
     application.dependency_overrides[get_ingestor] = lambda: make_fake_ingest()
@@ -332,6 +338,8 @@ def app(engine, SessionFactory, fake_index):
     application.dependency_overrides[get_notes_engine] = lambda: FakeNotesEngine()
     # Flashcard decks generate inline (synchronously) in tests with a fake engine.
     application.dependency_overrides[get_flashcards_runner] = lambda: FlashcardInlineRunner(SessionFactory, FakeFlashcardEngine())
+    # Multimodal ingestion runs inline (synchronously) in tests with a deterministic fake engine.
+    application.dependency_overrides[get_ingestion_runner] = lambda: IngestionInlineRunner(SessionFactory, FakeMultimodalEngine())
     return application
 
 
