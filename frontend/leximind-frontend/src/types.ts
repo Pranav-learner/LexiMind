@@ -594,3 +594,212 @@ export interface TagListResponse {
   items: Tag[];
   total: number;
 }
+
+// ----------------------------------------------------------------- flashcards
+// Contracts for the AI Flashcards & Active Recall Engine (Phase 3, Module 7). Decks generate
+// asynchronously (poll GET /decks/{id}/status). Cards carry SM-2 spaced-repetition state. A
+// citation's `document_id` is the VECTOR document id (resolve via GET .../documents/by-vector/{id}).
+
+export type CardType = "basic" | "definition" | "cloze" | "truefalse";
+export type CardTypePref = "mixed" | CardType;
+export type DeckStatus = "ready" | "queued" | "processing" | "completed" | "failed" | "cancelled";
+export type DeckScope = "manual" | "document" | "multi" | "workspace";
+export type CardStatus = "active" | "suspended" | "archived";
+export type ReviewRating = "again" | "hard" | "good" | "easy";
+export type LearningStage = "new" | "learning" | "review" | "relearning";
+
+export interface DeckStats {
+  total: number;
+  new: number;
+  due: number;
+  learning: number;
+  review: number;
+  suspended: number;
+  mastered: number;
+  avg_mastery: number;
+}
+
+export interface Deck {
+  id: string;
+  workspace_id: string;
+  owner_id: string;
+  name: string;
+  description: string;
+  color: string;
+  icon: string;
+  scope: DeckScope;
+  document_id: string | null;
+  note_id: string | null;
+  summary_id: string | null;
+  conversation_id: string | null;
+  subject: string | null;
+  card_type_pref: CardTypePref;
+  status: DeckStatus;
+  progress: number;
+  stage: string;
+  error: string | null;
+  created_by: string;
+  card_count: number;
+  is_archived: boolean;
+  is_public: boolean;
+  model_name: string;
+  generation_ms: number;
+  created_at: string;
+  updated_at: string;
+  stats?: DeckStats | null;
+}
+
+export interface FlashcardCitationT {
+  id: string;
+  document_id: string | null;
+  chunk_id: string | null;
+  page_number: number | null;
+  workspace_id: string;
+  citation_text: string;
+  confidence: number | null;
+}
+
+export interface Flashcard {
+  id: string;
+  workspace_id: string;
+  owner_id: string;
+  deck_id: string;
+  document_id: string | null;
+  note_id: string | null;
+  summary_id: string | null;
+  conversation_id: string | null;
+  front: string;
+  back: string;
+  hint: string;
+  card_type: CardType;
+  extra: Record<string, unknown> | null;
+  difficulty: string;
+  created_by: string;
+  status: CardStatus;
+  is_favorite: boolean;
+  learning_stage: LearningStage;
+  ease_factor: number;
+  interval_days: number;
+  repetitions: number;
+  review_count: number;
+  lapse_count: number;
+  correct_count: number;
+  mastery_score: number;
+  citation_count: number;
+  last_reviewed_at: string | null;
+  next_review_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type FlashcardDetail = Flashcard & { citations: FlashcardCitationT[] };
+
+export interface DeckListResponse {
+  items: Deck[];
+  total: number;
+  page: number;
+  page_size: number;
+  pages: number;
+}
+
+export interface FlashcardListResponse {
+  items: Flashcard[];
+  total: number;
+  page: number;
+  page_size: number;
+  pages: number;
+}
+
+export interface ReviewButton {
+  rating: ReviewRating;
+  interval_days: number;
+  label: string;
+}
+
+export interface ReviewCardT {
+  card: FlashcardDetail;
+  buttons: ReviewButton[];
+}
+
+export interface ReviewQueue {
+  deck_id: string | null;
+  total_due: number;
+  new_count: number;
+  due_count: number;
+  cards: ReviewCardT[];
+}
+
+export interface ReviewResult {
+  card: Flashcard;
+  rating: ReviewRating;
+  scheduled_interval: number;
+  next_review_at: string | null;
+  mastery_score: number;
+}
+
+export interface DailyActivity {
+  date: string;
+  reviews: number;
+  correct: number;
+}
+
+export interface LearningAnalytics {
+  total_cards: number;
+  active_cards: number;
+  new_cards: number;
+  due_today: number;
+  mastered_cards: number;
+  suspended_cards: number;
+  reviews_today: number;
+  reviews_total: number;
+  accuracy: number;
+  retention: number;
+  avg_response_time_ms: number;
+  study_streak_days: number;
+  avg_mastery: number;
+  daily_activity: DailyActivity[];
+  deck_count: number;
+}
+
+export interface DeckGenerateInput {
+  name?: string;
+  scope?: DeckScope;
+  document_id?: string;
+  document_ids?: string[];
+  note_id?: string;
+  summary_id?: string;
+  conversation_id?: string;
+  subject?: string;
+  card_type_pref?: CardTypePref;
+  count?: number;
+  deck_id?: string;
+}
+
+export interface CardCreateInput {
+  deck_id?: string;
+  front: string;
+  back?: string;
+  hint?: string;
+  card_type?: CardType;
+  difficulty?: string;
+  document_id?: string;
+  note_id?: string;
+  summary_id?: string;
+  conversation_id?: string;
+  citations?: Array<{
+    document_id?: string;
+    chunk_id?: string;
+    page_number?: number;
+    citation_text?: string;
+    confidence?: number;
+  }>;
+}
+
+export interface DeckListParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  archived?: "active" | "archived" | "all";
+  sort_by?: "created_at" | "updated_at" | "name" | "card_count";
+  order?: SortOrder;
+}

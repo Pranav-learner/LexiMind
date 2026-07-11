@@ -206,6 +206,96 @@ Result:
 """
 
 
+# --- Module 7: Flashcard generation prompt + parser --------------------------
+# Cards are generated in a STRICT, line-delimited format so they parse deterministically. The
+# prompt enforces the active-recall quality bar: one concept per card, no ambiguity, concise, with
+# a hint — never "split a paragraph into a question".
+_CARD_TYPE_GUIDE = {
+    "mixed": "Choose the most suitable type per fact (basic, definition, cloze, or truefalse).",
+    "basic": "Write question→answer (basic) cards only.",
+    "definition": "Write concept→definition cards only.",
+    "cloze": "Write cloze-deletion cards only: put the prompt with a blank in Q (use ____ for the blank) and the deleted term in A.",
+    "truefalse": "Write true/false cards only: Q is a statement; A is exactly 'True' or 'False' (add a one-line why in H).",
+}
+
+
+def build_flashcard_prompt(card_type_pref: str, n: int, context: str) -> str:
+    """Assemble a grounded flashcard-generation prompt for one context window.
+
+    `context` is the Phase-2 engineered context (deduped, ranked, budgeted, compressed) — NOT the
+    raw document — so cards stay grounded and their citations map back to retrieved evidence.
+    Output MUST be the strict block format parsed by `parse_flashcards`.
+    """
+    guide = _CARD_TYPE_GUIDE.get(card_type_pref, _CARD_TYPE_GUIDE["mixed"])
+    return f"""You are LexiMind, an expert at creating high-quality study flashcards for active recall.
+
+Create up to {n} flashcards from ONLY the information in the context below. {guide}
+
+RULES (critical):
+- One single concept per card. No compound or ambiguous questions.
+- Questions must be answerable without seeing the context. Be concise and specific.
+- Do NOT invent facts. If the context is thin, make fewer cards rather than guessing.
+- Always include a short hint that nudges without giving the answer away.
+- Do NOT simply copy sentences or split paragraphs — test understanding of the concept.
+
+Output EACH card in EXACTLY this block format, separated by a line with three dashes:
+
+Q: <front of card>
+A: <back of card / answer>
+H: <a short hint>
+T: <one of: basic, definition, cloze, truefalse>
+---
+
+Context:
+{context}
+
+Flashcards:
+"""
+
+
+def parse_flashcards(raw: str, *, default_type: str = "basic") -> List[Dict[str, Any]]:
+    """Parse the strict block format from `build_flashcard_prompt` into card dicts.
+
+    Robust to minor LLM drift: tolerates extra blank lines, missing H/T, and multi-line answers
+    up to the next field marker. Cards missing a Q are dropped; a card_type not in the known set
+    falls back to `default_type`.
+    """
+    valid_types = {"basic", "definition", "cloze", "truefalse"}
+    cards: List[Dict[str, Any]] = []
+    blocks = [b.strip() for b in raw.replace("\r\n", "\n").split("---") if b.strip()]
+    for block in blocks:
+        front = back = hint = ""
+        ctype = default_type
+        current = None
+        for line in block.split("\n"):
+            stripped = line.strip()
+            head = stripped[:2].upper()
+            if head == "Q:":
+                current = "front"; front = stripped[2:].strip()
+            elif head == "A:":
+                current = "back"; back = stripped[2:].strip()
+            elif head == "H:":
+                current = "hint"; hint = stripped[2:].strip()
+            elif head == "T:":
+                current = None
+                t = stripped[2:].strip().lower()
+                ctype = t if t in valid_types else default_type
+            elif current and stripped:
+                # continuation of a multi-line field
+                if current == "front":
+                    front = f"{front} {stripped}".strip()
+                elif current == "back":
+                    back = f"{back} {stripped}".strip()
+                elif current == "hint":
+                    hint = f"{hint} {stripped}".strip()
+        if not front:
+            continue
+        if ctype != "cloze" and not back:
+            continue  # non-cloze cards need an answer
+        cards.append({"front": front[:4000], "back": back[:8000], "hint": hint[:1000], "card_type": ctype})
+    return cards
+
+
 def stream_answer(prompt: str) -> Iterator[str]:
     """Stream the local LLM (Ollama) token-by-token for the given fully-assembled prompt.
 

@@ -9,6 +9,7 @@ from app.chat.api import router as chat_router
 from app.db.base import init_db
 from app.documents.api import router as document_router
 from app.documents.reading_api import router as reading_router
+from app.flashcards.api import router as flashcards_router
 from app.notes.api import router as notes_router
 from app.notes.api import tag_router as notes_tag_router
 from app.summaries.api import router as summary_router
@@ -41,6 +42,7 @@ app.include_router(chat_router)
 app.include_router(summary_router)
 app.include_router(notes_router)
 app.include_router(notes_tag_router)
+app.include_router(flashcards_router)
 app.include_router(upload_router)
 app.include_router(query_router)
 

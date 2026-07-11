@@ -29,6 +29,7 @@ from app.db.base import Base, get_db
 from app.auth import models as _auth_models  # noqa: F401
 from app.chat import models as _chat_models  # noqa: F401
 from app.documents import models as _doc_models  # noqa: F401
+from app.flashcards import models as _fc_models  # noqa: F401
 from app.notes import models as _note_models  # noqa: F401
 from app.summaries import models as _sum_models  # noqa: F401
 from app.workspaces import models as _ws_models  # noqa: F401
@@ -90,6 +91,28 @@ class FakeNotesEngine:
 
     def assist(self, note, db, *, operation, selection, instruction=None, ground=True):
         return f"[{operation}] {selection}".strip()
+
+
+class FakeFlashcardEngine:
+    """Deterministic stand-in for the faiss-backed flashcard engine.
+
+    Emits a `plan`, then `count` grounded `card` events (each with a citation), then a `final`,
+    mirroring the PipelineFlashcardEngine contract — so the whole generation pipeline (bulk card
+    insert, citations, progress, deck recount, workspace counter) is exercised without
+    retrieval/LLM.
+    """
+
+    def __init__(self, per_card_citation=True):
+        self.per_card_citation = per_card_citation
+
+    def generate(self, deck, db, *, count):
+        yield {"type": "plan", "total": count, "model": "llama3"}
+        for i in range(count):
+            cits = [{"chunk_id": f"doc_x:{i}", "document_id": "doc_x", "page_number": i + 1,
+                     "text": f"evidence {i}", "confidence": 0.8}] if self.per_card_citation else []
+            yield {"type": "card", "front": f"Question {i}?", "back": f"Answer {i}.",
+                   "hint": f"Hint {i}", "card_type": "basic", "citations": cits}
+        yield {"type": "final", "token_usage": 21}
 
 
 class FakeChatEngine:
@@ -263,6 +286,9 @@ def app(engine, SessionFactory, fake_index):
     from app.documents.api import get_index_context, get_ingestor
     from app.documents.api import router as document_router
     from app.documents.reading_api import router as reading_router
+    from app.flashcards.api import get_flashcards_runner
+    from app.flashcards.api import router as flashcards_router
+    from app.flashcards.runner import InlineRunner as FlashcardInlineRunner
     from app.notes.api import get_notes_engine, get_notes_runner
     from app.notes.api import router as notes_router
     from app.notes.api import tag_router as notes_tag_router
@@ -288,6 +314,7 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(summary_router)
     application.include_router(notes_router)
     application.include_router(notes_tag_router)
+    application.include_router(flashcards_router)
     application.dependency_overrides[get_db] = override_get_db
     application.dependency_overrides[get_index_context] = lambda: fake_index
     application.dependency_overrides[get_ingestor] = lambda: make_fake_ingest()
@@ -297,6 +324,8 @@ def app(engine, SessionFactory, fake_index):
     # Notes: inline runner (async AI generation) + fake engine (also serves assist) in tests.
     application.dependency_overrides[get_notes_runner] = lambda: NoteInlineRunner(SessionFactory, FakeNotesEngine())
     application.dependency_overrides[get_notes_engine] = lambda: FakeNotesEngine()
+    # Flashcard decks generate inline (synchronously) in tests with a fake engine.
+    application.dependency_overrides[get_flashcards_runner] = lambda: FlashcardInlineRunner(SessionFactory, FakeFlashcardEngine())
     return application
 
 
