@@ -1299,3 +1299,86 @@ export interface SearchStats {
   indexed: Record<string, number>;
   recent_queries: string[];
 }
+
+// ----------------------------------------------------------------- multimodal context engineering
+// Contracts for the Multimodal Context Engineering Engine (Phase 4, Module 4). Assembles multimodal
+// retrieval into an optimized, cited, explainable LLM prompt.
+
+export interface ContextEvidence {
+  key: string;
+  modality: string;
+  source_type: string;
+  title: string;
+  content: string;
+  document_id: string | null;
+  page_number: number | null;
+  evidence_score: number;
+  token_cost: number;
+  compressed: boolean;
+  rank: number;
+  selection_reason: string;
+  contributing_modalities: string[];
+  merged_from: string[];
+  ranking_contributions?: Record<string, number>;
+}
+
+export interface ContextBlock {
+  modality: string;
+  header: string;
+  order: number;
+  token_cost: number;
+  items: ContextEvidence[];
+}
+
+export interface ContextCitation {
+  modality: string;
+  document_id: string | null;
+  chunk_id: string | null;
+  asset_id: string | null;
+  page_number: number | null;
+  source_type: string;
+  text: string;
+}
+
+export interface BudgetAllocation {
+  modality: string;
+  allocated: number;
+  used: number;
+}
+
+export interface ContextMetrics {
+  retrieved: number;
+  after_dedup: number;
+  included: number;
+  dropped: number;
+  context_tokens: number;
+  prompt_tokens: number;
+  duplicate_reduction: number;
+  compression_ratio: number;
+  total_ms: number;
+  stage_ms: Record<string, number>;
+}
+
+export interface ContextResponse {
+  query: string;
+  primary_intent: string;
+  modalities: string[];
+  weights: Record<string, number>;
+  blocks: ContextBlock[];
+  citations: ContextCitation[];
+  budget: BudgetAllocation[];
+  metrics: ContextMetrics;
+  dropped: Array<{ key: string; modality: string; reason: string }>;
+  prompt: string | null;
+  context: string | null;
+}
+
+export interface ContextObservability {
+  builds: number;
+  avg_total_ms: number;
+  avg_compression_ratio: number;
+  avg_duplicate_reduction: number;
+  avg_context_tokens: number;
+  intent_usage: Record<string, number>;
+  recent: Array<Record<string, unknown>>;
+}

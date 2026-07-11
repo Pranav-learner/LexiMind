@@ -24,6 +24,7 @@ const ReviewSession = lazy(() => import("./pages/ReviewSession"));
 const KnowledgeExplorer = lazy(() => import("./pages/KnowledgeExplorer"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const MultimodalSearch = lazy(() => import("./pages/MultimodalSearch"));
+const ContextInspector = lazy(() => import("./pages/ContextInspector"));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -176,6 +177,14 @@ export default function App() {
           element={
             <RequireAuth>
               <MultimodalSearch />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/workspace/:workspaceId/context"
+          element={
+            <RequireAuth>
+              <ContextInspector />
             </RequireAuth>
           }
         />

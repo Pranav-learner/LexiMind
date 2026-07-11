@@ -92,6 +92,9 @@ export default function WorkspaceDetail() {
             <Link className="ws-btn primary" to={`/workspace/${ws.id}/search`}>
               🔭 Search
             </Link>
+            <Link className="ws-btn primary" to={`/workspace/${ws.id}/context`}>
+              🧠 Context
+            </Link>
             <Link className="ws-btn primary" to={`/workspace/${ws.id}/library`}>
               📚 Open Document Library
             </Link>

@@ -33,6 +33,7 @@ from app.citations import models as _cite_models  # noqa: F401
 from app.documents import models as _doc_models  # noqa: F401
 from app.flashcards import models as _fc_models  # noqa: F401
 from app.ingestion import models as _ing_models  # noqa: F401
+from app.mmcontext import models as _mmc_models  # noqa: F401
 from app.mmretrieval import models as _mmr_models  # noqa: F401
 from app.notes import models as _note_models  # noqa: F401
 from app.summaries import models as _sum_models  # noqa: F401
@@ -307,6 +308,7 @@ def app(engine, SessionFactory, fake_index):
     from app.mmretrieval.api import get_text_retriever
     from app.mmretrieval.api import router as mmsearch_router
     from app.mmretrieval.retrievers import LexicalTextRetriever
+    from app.mmcontext.api import router as mmcontext_router
     from app.notes.api import get_notes_engine, get_notes_runner
     from app.notes.api import router as notes_router
     from app.notes.api import tag_router as notes_tag_router
@@ -338,6 +340,7 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(ingestion_router)
     application.include_router(vision_router)
     application.include_router(mmsearch_router)
+    application.include_router(mmcontext_router)
     application.dependency_overrides[get_db] = override_get_db
     application.dependency_overrides[get_index_context] = lambda: fake_index
     application.dependency_overrides[get_ingestor] = lambda: make_fake_ingest()

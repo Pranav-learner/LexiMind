@@ -13,6 +13,7 @@ import './styles/citations.css'
 import './styles/dashboard.css'
 import './styles/ingestion.css'
 import './styles/search.css'
+import './styles/context.css'
 import App from './App.tsx'
 import { AuthProvider } from './context/AuthContext'
 
