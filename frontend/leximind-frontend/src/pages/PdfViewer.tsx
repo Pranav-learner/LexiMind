@@ -20,6 +20,7 @@ import { useCitationHighlight } from "../components/viewer/useCitationHighlight"
 import { useReadingSession, readCachedSession } from "../components/viewer/useReadingSession";
 import type { ViewerActionType } from "../components/viewer/actions";
 import * as viewerApi from "../api/viewer";
+import { createNote } from "../api/notes";
 import type { QueryCitation } from "../types";
 
 const MIN_SCALE = 0.25;
@@ -262,7 +263,20 @@ function ViewerInner({
           showToast("Highlighted");
           break;
         case "note":
-          showToast("Notes — coming soon");
+          // Module 6: create a note seeded with the selected text + a citation to this page, then
+          // open the editor. Best-effort — a failure just shows a toast.
+          createNote(ws, {
+            source: "selection",
+            title: `Note · p.${currentPage}`,
+            content: `> ${trimmed}\n\n`,
+            document_id: docId,
+            citations: meta?.vector_document_id
+              ? [{ document_id: meta.vector_document_id, page_number: currentPage, citation_text: trimmed.slice(0, 300) }]
+              : undefined,
+          }).then(
+            (n) => navigate(`/workspace/${ws}/notes/${n.id}`),
+            () => showToast("Could not create note"),
+          );
           break;
         case "flashcard":
           showToast("Flashcards — coming soon");
@@ -274,7 +288,7 @@ function ViewerInner({
       setSelMenu(null);
       setCtxMenu(null);
     },
-    [citation, currentPage, showToast],
+    [citation, currentPage, showToast, ws, docId, meta, navigate],
   );
 
   const onViewerMouseUp = useCallback(() => {

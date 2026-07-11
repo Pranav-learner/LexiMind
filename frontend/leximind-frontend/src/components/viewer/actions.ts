@@ -23,7 +23,7 @@ export const SELECTION_ACTIONS: ViewerActionDef[] = [
   { type: "ask-ai", label: "Ask AI", icon: "✨", live: true },
   { type: "copy", label: "Copy", icon: "⧉", live: true },
   { type: "highlight", label: "Highlight", icon: "🖍", live: true },
-  { type: "note", label: "Note", icon: "📝", live: false },
+  { type: "note", label: "Note", icon: "📝", live: true },
   { type: "flashcard", label: "Flashcard", icon: "🎴", live: false },
 ];
 
@@ -32,7 +32,7 @@ export const CONTEXT_ACTIONS: ViewerActionDef[] = [
   { type: "copy", label: "Copy", icon: "⧉", live: true },
   { type: "highlight", label: "Highlight", icon: "🖍", live: true },
   { type: "ask-ai", label: "Ask AI", icon: "✨", live: true },
-  { type: "note", label: "Create Note", icon: "📝", live: false },
+  { type: "note", label: "Create Note", icon: "📝", live: true },
   { type: "summary", label: "Generate Summary", icon: "📄", live: false },
   { type: "flashcard", label: "Generate Flashcard", icon: "🎴", live: false },
 ];

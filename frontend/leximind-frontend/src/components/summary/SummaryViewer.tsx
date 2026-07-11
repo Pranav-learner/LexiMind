@@ -9,10 +9,12 @@
 // when the summary id / reload key changes.
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import * as summaryApi from "../../api/summaries";
+import { noteFromSummary } from "../../api/notes";
 import { isTerminal } from "../../api/summaries";
 import { ApiError } from "../../api/client";
 import type {
@@ -46,6 +48,7 @@ export default function SummaryViewer({
   onDeleted,
   onOpenSummary,
 }: Props) {
+  const navigate = useNavigate();
   const [detail, setDetail] = useState<SummaryDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -191,6 +194,20 @@ export default function SummaryViewer({
     summaryApi.exportSummary(ws, summaryId, `${safe}.md`).catch(() => {});
   }
 
+  // Module 6: convert this summary into an editable Note (sections + citations preserved).
+  async function handleConvertToNotes() {
+    setBusy(true);
+    setError(null);
+    try {
+      const note = await noteFromSummary(ws, summaryId);
+      navigate(`/workspace/${ws}/notes/${note.id}`);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Could not convert to notes.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   if (loading && !detail) {
     return (
       <div className="sum-viewer sum-viewer-status">
@@ -267,6 +284,7 @@ export default function SummaryViewer({
         <div className="sum-actions" onClick={(e) => e.stopPropagation()}>
           <button className="ws-btn ghost" onClick={copyAll} disabled={generating} title="Copy all">📋 Copy</button>
           <button className="ws-btn ghost" onClick={handleExport} disabled={generating} title="Export as Markdown">⬇ Export</button>
+          <button className="ws-btn ghost" onClick={handleConvertToNotes} disabled={busy || generating} title="Convert to editable notes">📝 To notes</button>
           <button className="ws-btn ghost" onClick={() => window.print()} disabled={generating} title="Print">🖨 Print</button>
           <button className="ws-btn ghost" onClick={handleRegenerate} disabled={busy || generating} title="Regenerate">🔄 Regenerate</button>
           <button className="ws-btn ghost" onClick={handleDuplicate} disabled={busy} title="Duplicate">📑 Duplicate</button>

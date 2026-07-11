@@ -7,6 +7,7 @@ import './styles/document.css'
 import './styles/viewer.css'
 import './styles/chat.css'
 import './styles/summary.css'
+import './styles/notes.css'
 import App from './App.tsx'
 import { AuthProvider } from './context/AuthContext'
 

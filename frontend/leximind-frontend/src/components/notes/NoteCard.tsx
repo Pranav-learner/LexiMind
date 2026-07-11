@@ -24,9 +24,11 @@ export default function NoteCard({
   const status = STATUS_META[note.status];
   const generating = note.status === "queued" || note.status === "processing";
 
-  const snippet = note.content
-    ? note.content.replace(/[#>*_`~[\]()-]/g, "").replace(/\s+/g, " ").trim().slice(0, 160)
-    : note.description || "Empty note";
+  const snippet = (note.description || "")
+    .replace(/[#>*_`~[\]()-]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 160) || "No description — open to view.";
 
   return (
     <div
