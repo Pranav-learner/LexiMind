@@ -8,12 +8,13 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import * as chatApi from "../api/chat";
+import * as notesApi from "../api/notes";
 import { getDocumentByVector } from "../api/viewer";
 import ConversationSidebar from "../components/chat/ConversationSidebar";
 import ChatMessage from "../components/chat/ChatMessage";
 import ChatComposer from "../components/chat/ChatComposer";
 import { useChat } from "../components/chat/useChat";
-import type { ChatCitation, Conversation } from "../types";
+import type { ChatCitation, ChatMessage as ChatMessageType, Conversation } from "../types";
 
 export default function ChatWorkspace() {
   const { workspaceId = "", conversationId } = useParams();
@@ -125,6 +126,19 @@ function ChatWindow({ ws, conversationId, onCitation, onActivity }: WindowProps)
   const stickBottomRef = useRef(true);
   const prevHeightRef = useRef(0);
   const prevStreamingRef = useRef(false);
+
+  // Module 6: persist an assistant answer (with its citations) as an editable Note, then open it.
+  const saveAsNote = useCallback(
+    async (m: ChatMessageType) => {
+      try {
+        const note = await notesApi.noteFromMessage(ws, m.id);
+        navigate(`/workspace/${ws}/notes/${note.id}`);
+      } catch {
+        /* best-effort; stay in chat */
+      }
+    },
+    [ws, navigate],
+  );
 
   // Load the conversation metadata for the header.
   const loadConv = useCallback(() => {
@@ -262,6 +276,7 @@ function ChatWindow({ ws, conversationId, onCitation, onActivity }: WindowProps)
                 }
                 onEdit={m.role === "user" && !streaming ? editMessage : undefined}
                 onRetry={m.role === "user" ? retry : undefined}
+                onSaveAsNote={m.role === "assistant" ? saveAsNote : undefined}
               />
             ))
           )}

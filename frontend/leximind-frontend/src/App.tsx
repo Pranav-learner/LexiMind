@@ -16,6 +16,8 @@ const DocumentsLibrary = lazy(() => import("./pages/DocumentsLibrary"));
 const PdfViewer = lazy(() => import("./pages/PdfViewer"));
 const ChatWorkspace = lazy(() => import("./pages/ChatWorkspace"));
 const SummariesDashboard = lazy(() => import("./pages/SummariesDashboard"));
+const NotesDashboard = lazy(() => import("./pages/NotesDashboard"));
+const NoteEditorPage = lazy(() => import("./pages/NoteEditorPage"));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -104,6 +106,22 @@ export default function App() {
           element={
             <RequireAuth>
               <SummariesDashboard />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/workspace/:workspaceId/notes"
+          element={
+            <RequireAuth>
+              <NotesDashboard />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/workspace/:workspaceId/notes/:noteId"
+          element={
+            <RequireAuth>
+              <NoteEditorPage />
             </RequireAuth>
           }
         />

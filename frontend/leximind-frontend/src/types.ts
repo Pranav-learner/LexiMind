@@ -413,3 +413,184 @@ export interface SummaryCreateInput {
   title?: string;
   top_k?: number;
 }
+
+// ----------------------------------------------------------------- notes
+// Contracts for the Smart Notes Engine (Phase 3, Module 6). Notes are persistent, editable,
+// user-owned knowledge assets. AI generation is asynchronous (poll GET /{id}/status until
+// terminal); manual notes are born `ready`. A citation's `document_id` is the VECTOR document id
+// (resolve via GET .../documents/by-vector/{document_id}). NOTE: the section type is
+// `NoteSectionT` to avoid any collision.
+
+export type NoteType = "quick" | "study" | "detailed" | "chapterwise" | "concept" | "revision";
+export type NoteStatus =
+  | "ready"
+  | "queued"
+  | "processing"
+  | "completed"
+  | "failed"
+  | "cancelled";
+export type NoteSource = "blank" | "document" | "summary" | "chat" | "selection";
+export type NoteScope = "document" | "multi" | "workspace";
+
+export type NoteStatusFilter = "any" | NoteStatus;
+export type NoteArchivedFilter = "active" | "archived" | "all";
+export type NotePinnedFilter = "any" | "pinned" | "favorite";
+export type NoteSortField =
+  | "created_at"
+  | "updated_at"
+  | "last_opened_at"
+  | "title"
+  | "word_count";
+
+export interface Tag {
+  id: string;
+  workspace_id: string;
+  name: string;
+  color: string;
+  note_count: number;
+}
+
+export interface NoteCitationT {
+  id: string;
+  note_section_id: string | null;
+  document_id: string | null; // VECTOR document id
+  chunk_id: string | null;
+  page_number: number | null;
+  workspace_id: string;
+  citation_text: string;
+  confidence: number | null;
+}
+
+export interface NoteSectionT {
+  id: string;
+  heading: string;
+  order: number;
+  content: string;
+  citation_count: number;
+}
+
+export interface OutlineItem {
+  level: number;
+  text: string;
+  slug: string;
+}
+
+export interface Note {
+  id: string;
+  workspace_id: string;
+  owner_id: string;
+  document_id: string | null;
+  conversation_id: string | null;
+  folder_id: string | null;
+  source: NoteSource;
+  note_type: NoteType | null;
+  title: string;
+  description: string;
+  editor_format: string;
+  status: NoteStatus;
+  progress: number;
+  stage: string;
+  error: string | null;
+  created_by: string;
+  is_pinned: boolean;
+  is_favorite: boolean;
+  is_archived: boolean;
+  word_count: number;
+  reading_time: number;
+  section_count: number;
+  citation_count: number;
+  model_name: string;
+  token_usage: number;
+  generation_ms: number;
+  version: number;
+  last_opened_at: string | null;
+  created_at: string;
+  updated_at: string;
+  tags: Tag[];
+}
+
+export type NoteDetail = Note & {
+  content: string; // canonical editable Markdown body
+  sections: NoteSectionT[];
+  citations: NoteCitationT[];
+  outline: OutlineItem[];
+};
+
+export interface NoteListResponse {
+  items: Note[];
+  total: number;
+  page: number;
+  page_size: number;
+  pages: number;
+}
+
+export interface NoteListParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  note_type?: NoteType | "";
+  source?: NoteSource | "";
+  document_id?: string;
+  conversation_id?: string;
+  tag_id?: string;
+  status?: NoteStatusFilter;
+  archived?: NoteArchivedFilter;
+  pinned?: NotePinnedFilter;
+  sort_by?: NoteSortField;
+  order?: SortOrder;
+}
+
+export interface NoteCreateInput {
+  title?: string;
+  description?: string;
+  content?: string;
+  source?: NoteSource;
+  document_id?: string;
+  conversation_id?: string;
+  tags?: string[];
+  citations?: Array<{
+    document_id?: string;
+    chunk_id?: string;
+    page_number?: number;
+    citation_text?: string;
+    confidence?: number;
+  }>;
+}
+
+export interface NoteGenerateInput {
+  note_type: NoteType;
+  scope?: NoteScope;
+  document_id?: string;
+  document_ids?: string[];
+  conversation_id?: string;
+  title?: string;
+  subject?: string;
+}
+
+export interface NoteMetaUpdateInput {
+  title?: string;
+  description?: string;
+  is_pinned?: boolean;
+  is_favorite?: boolean;
+  is_archived?: boolean;
+}
+
+export type AssistOperation =
+  | "rewrite"
+  | "expand"
+  | "simplify"
+  | "grammar"
+  | "examples"
+  | "quiz"
+  | "flashcards"
+  | "summarize";
+
+export interface AssistResponse {
+  operation: AssistOperation;
+  result: string;
+}
+
+export interface TagListResponse {
+  items: Tag[];
+  total: number;
+}

@@ -74,7 +74,10 @@ export default function WorkspaceDetail() {
               💬 Open Chat
             </Link>
             <Link className="ws-btn primary" to={`/workspace/${ws.id}/summaries`}>
-              📝 Summaries
+              📄 Summaries
+            </Link>
+            <Link className="ws-btn primary" to={`/workspace/${ws.id}/notes`}>
+              📝 Notes
             </Link>
             <Link className="ws-btn primary" to={`/workspace/${ws.id}/library`}>
               📚 Open Document Library

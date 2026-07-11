@@ -29,6 +29,7 @@ from app.db.base import Base, get_db
 from app.auth import models as _auth_models  # noqa: F401
 from app.chat import models as _chat_models  # noqa: F401
 from app.documents import models as _doc_models  # noqa: F401
+from app.notes import models as _note_models  # noqa: F401
 from app.summaries import models as _sum_models  # noqa: F401
 from app.workspaces import models as _ws_models  # noqa: F401
 
@@ -59,6 +60,36 @@ class FakeSummaryEngine:
             yield {"type": "section", "heading": sec["heading"], "order": i,
                    "content": sec["content"], "citations": sec.get("citations", [])}
         yield {"type": "final", "token_usage": 42}
+
+
+class FakeNotesEngine:
+    """Deterministic stand-in for the faiss-backed notes engine.
+
+    `generate` emits a `plan`, two grounded `section` events (with a citation each), then a
+    `final`, mirroring the PipelineNotesEngine contract — so the whole generation pipeline
+    (sections, citations, content assembly, progress, persistence) is exercised without
+    retrieval/LLM. `assist` echoes a deterministic transformation of the selection.
+    """
+
+    def __init__(self, sections=None):
+        self.sections = sections or [
+            {"heading": "Overview", "content": "- First key point.\n- Second key point.",
+             "citations": [{"chunk_id": "doc_x:0", "document_id": "doc_x", "page_number": 3,
+                            "text": "overview evidence", "confidence": 0.88}]},
+            {"heading": "Key Concepts", "content": "- **Term** — a definition.",
+             "citations": [{"chunk_id": "doc_x:9", "document_id": "doc_x", "page_number": 20,
+                            "text": "concept evidence", "confidence": 0.77}]},
+        ]
+
+    def generate(self, note, db):
+        yield {"type": "plan", "total": len(self.sections), "model": "llama3"}
+        for i, sec in enumerate(self.sections, start=1):
+            yield {"type": "section", "heading": sec["heading"], "order": i,
+                   "content": sec["content"], "citations": sec.get("citations", [])}
+        yield {"type": "final", "token_usage": 42}
+
+    def assist(self, note, db, *, operation, selection, instruction=None, ground=True):
+        return f"[{operation}] {selection}".strip()
 
 
 class FakeChatEngine:
@@ -232,6 +263,10 @@ def app(engine, SessionFactory, fake_index):
     from app.documents.api import get_index_context, get_ingestor
     from app.documents.api import router as document_router
     from app.documents.reading_api import router as reading_router
+    from app.notes.api import get_notes_engine, get_notes_runner
+    from app.notes.api import router as notes_router
+    from app.notes.api import tag_router as notes_tag_router
+    from app.notes.runner import InlineRunner as NoteInlineRunner
     from app.summaries.api import get_summary_runner
     from app.summaries.api import router as summary_router
     from app.summaries.runner import InlineRunner
@@ -251,12 +286,17 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(reading_router)
     application.include_router(chat_router)
     application.include_router(summary_router)
+    application.include_router(notes_router)
+    application.include_router(notes_tag_router)
     application.dependency_overrides[get_db] = override_get_db
     application.dependency_overrides[get_index_context] = lambda: fake_index
     application.dependency_overrides[get_ingestor] = lambda: make_fake_ingest()
     application.dependency_overrides[get_chat_engine] = lambda: FakeChatEngine()
     # Summaries run inline (synchronously) in tests, using the same in-memory DB + a fake engine.
     application.dependency_overrides[get_summary_runner] = lambda: InlineRunner(SessionFactory, FakeSummaryEngine())
+    # Notes: inline runner (async AI generation) + fake engine (also serves assist) in tests.
+    application.dependency_overrides[get_notes_runner] = lambda: NoteInlineRunner(SessionFactory, FakeNotesEngine())
+    application.dependency_overrides[get_notes_engine] = lambda: FakeNotesEngine()
     return application
 
 

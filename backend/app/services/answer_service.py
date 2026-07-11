@@ -120,6 +120,92 @@ Summary of "{heading}":
 """
 
 
+# --- Module 6: Smart Notes prompts -------------------------------------------
+# Note generation is deliberately STRUCTURED (headings, bullets, key concepts, examples) — never
+# plain prose — so the output drops straight into the Markdown editor as usable study material.
+_NOTE_STYLE = {
+    "quick": "Write terse, scannable bullet points capturing only the essential facts. No filler.",
+    "study": (
+        "Produce study notes: a short intro sentence, then **Key points** as bullets, a "
+        "**Key concepts** mini-glossary (term — definition), and an **Example** if the context "
+        "supports one. Use Markdown bullets and bold labels."
+    ),
+    "detailed": (
+        "Produce thorough notes: explanatory bullets grouped under bold sub-labels, definitions of "
+        "any jargon, and worked examples where the context allows. Be comprehensive but grounded."
+    ),
+    "chapterwise": "Summarize this section as structured notes: 3–6 bullets plus any key terms.",
+    "concept": (
+        "Explain the core concept(s) as notes: **Definition**, **Why it matters**, **How it works** "
+        "(bullets), and a concrete **Example**. Ground every claim in the context."
+    ),
+    "revision": (
+        "Write revision notes: crisp recall bullets and a short **Remember** list of the most "
+        "test-worthy facts. Optimize for last-minute review."
+    ),
+}
+
+
+def build_notes_prompt(note_type: str, heading: str, context: str) -> str:
+    """Assemble a grounded, STRUCTURED note-generation prompt for one section.
+
+    Like the summary prompt, `context` is the Phase-2 engineered context (deduped, ranked,
+    budgeted, compressed) for this section — NOT the raw document — so the notes stay grounded and
+    their citations map back to retrieved evidence. The style rules force headings/bullets/examples
+    rather than a paragraph blob.
+    """
+    style = _NOTE_STYLE.get(note_type, _NOTE_STYLE["study"])
+    return f"""You are LexiMind, a precise note-taking assistant.
+
+Create structured, well-organized study notes for the topic "{heading}" using ONLY the
+information in the context below. Do NOT invent facts or add information not present in the
+context. If the context is thin, write fewer bullets rather than speculating. {style}
+
+Do not repeat the heading. Output Markdown only (bullets, bold labels, code/quotes if relevant).
+
+Context:
+{context}
+
+Notes on "{heading}":
+"""
+
+
+# AI-assisted editing operations. Each maps to a compact instruction the LLM applies to a
+# SELECTION of the user's note (optionally grounded by retrieved context for expand/examples).
+NOTE_ASSIST_OPS = {
+    "rewrite": "Rewrite the following text to be clearer and better organized. Keep the meaning and any Markdown structure.",
+    "expand": "Expand the following text with more detail and depth, staying grounded in the provided context. Keep Markdown formatting.",
+    "simplify": "Rewrite the following text in simpler language a beginner can understand, without losing key facts.",
+    "grammar": "Fix grammar, spelling, and punctuation in the following text. Return the corrected text only, preserving formatting.",
+    "examples": "Generate 1–3 concrete examples that illustrate the following text, grounded in the provided context. Return Markdown bullets.",
+    "quiz": "Generate 3–5 quiz questions (with answers) that test understanding of the following text. Format as a Markdown list.",
+    "flashcards": "Generate flashcards from the following text as a Markdown list of 'Q: ... / A: ...' pairs.",
+    "summarize": "Summarize the following text into a few tight bullet points.",
+}
+
+# Which assist ops benefit from retrieval grounding (facts pulled from the workspace).
+NOTE_ASSIST_GROUNDED = {"expand", "examples"}
+
+
+def build_note_assist_prompt(operation: str, selection: str, *, instruction: str | None = None,
+                             context: str | None = None) -> str:
+    """Assemble the prompt for an AI-assisted edit of a note selection."""
+    base = NOTE_ASSIST_OPS.get(operation, NOTE_ASSIST_OPS["rewrite"])
+    extra = f"\nAdditional instruction from the user: {instruction}\n" if instruction else ""
+    ctx = f"\nGrounding context (use only what is relevant):\n{context}\n" if context else ""
+    return f"""You are LexiMind, an expert writing and study assistant.
+
+{base}{extra}{ctx}
+Return ONLY the transformed text (Markdown), with no preamble, explanation, or code fences around
+the whole answer.
+
+Text:
+{selection}
+
+Result:
+"""
+
+
 def stream_answer(prompt: str) -> Iterator[str]:
     """Stream the local LLM (Ollama) token-by-token for the given fully-assembled prompt.
 

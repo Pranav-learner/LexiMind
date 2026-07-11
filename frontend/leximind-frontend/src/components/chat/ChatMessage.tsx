@@ -19,6 +19,7 @@ interface Props {
   onEdit?: (message: ChatMessageType, next: string) => void;
   onRetry?: (message: ChatMessageType) => void;
   onCitation: (c: ChatCitation) => void;
+  onSaveAsNote?: (message: ChatMessageType) => void; // Module 6: persist an answer as a Note
 }
 
 function ChatMessageBase({
@@ -29,6 +30,7 @@ function ChatMessageBase({
   onEdit,
   onRetry,
   onCitation,
+  onSaveAsNote,
 }: Props) {
   const isUser = message.role === "user";
   const isError = message.meta?.status === "error";
@@ -121,6 +123,11 @@ function ChatMessageBase({
             {!isUser && onRegenerate && (
               <button className="chat-act" title="Regenerate response" aria-label="Regenerate response" onClick={onRegenerate}>
                 🔄 Regenerate
+              </button>
+            )}
+            {!isUser && !isError && onSaveAsNote && message.content && (
+              <button className="chat-act" title="Save this answer as a note" aria-label="Save as note" onClick={() => onSaveAsNote(message)}>
+                📝 Save as note
               </button>
             )}
           </div>

@@ -68,6 +68,7 @@ def init_db() -> None:
     from app.auth import models as _auth_models  # noqa: F401
     from app.chat import models as _chat_models  # noqa: F401
     from app.documents import models as _doc_models  # noqa: F401
+    from app.notes import models as _note_models  # noqa: F401
     from app.summaries import models as _sum_models  # noqa: F401
     from app.workspaces import models as _ws_models  # noqa: F401
 
