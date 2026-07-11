@@ -1167,3 +1167,74 @@ export interface OcrStatus {
   avg_confidence: number | null;
   pages: OcrPage[];
 }
+
+// ----------------------------------------------------------------- vision intelligence
+// Contracts for the Vision Intelligence Engine (Phase 4, Module 2). Understands the Module-1
+// extracted visual assets: classification, semantic caption, structured metadata, embeddings.
+
+export interface VisionJob {
+  id: string;
+  workspace_id: string;
+  document_id: string;
+  status: ProcessingStatusT;
+  stage: string;
+  progress: number;
+  error: string | null;
+  attempts: number;
+  asset_count: number;
+  analyzed_count: number;
+  embedding_count: number;
+  model_name: string;
+  embedding_model: string;
+  processing_ms: number;
+  pipeline_version: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export type VisionJobDetail = VisionJob & { logs: { stage: string; level: string; message: string }[] };
+
+export interface VisionAnalysis {
+  id: string;
+  asset_type: string;
+  asset_id: string;
+  page_number: number;
+  image_type: string;
+  caption: string;
+  objects: unknown[] | null;
+  relationships: unknown[] | null;
+  structured: Record<string, unknown> | null;
+  keywords: string[] | null;
+  topics: string[] | null;
+  complexity: string;
+  confidence: number | null;
+  language: string;
+  has_embedding: boolean;
+}
+
+export interface VisionAnalysisList {
+  items: VisionAnalysis[];
+  total: number;
+}
+
+export interface VisionEmbedding {
+  id: string;
+  asset_type: string;
+  asset_id: string;
+  model: string;
+  model_family: string;
+  dim: number;
+  vector: number[] | null;
+}
+
+export interface VisionSearchItem {
+  analysis_id: string;
+  document_id: string;
+  asset_type: string;
+  asset_id: string;
+  image_type: string;
+  caption: string;
+  keywords: string[];
+  page_number: number;
+  confidence: number | null;
+}

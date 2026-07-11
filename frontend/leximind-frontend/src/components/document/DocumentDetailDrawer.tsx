@@ -10,6 +10,7 @@ import { ApiError } from "../../api/client";
 import type { LibraryDocument, LibraryDocumentDetail } from "../../types";
 import { fileIcon, humanSize, relativeTime } from "./constants";
 import ProcessingPanel from "./ProcessingPanel";
+import VisionPanel from "./VisionPanel";
 
 interface Props {
   workspaceId: string;
@@ -260,6 +261,10 @@ export default function DocumentDetailDrawer({
 
           <Section title="Multimodal processing">
             <ProcessingPanel workspaceId={workspaceId} documentId={doc.id} />
+          </Section>
+
+          <Section title="Vision intelligence">
+            <VisionPanel workspaceId={workspaceId} documentId={doc.id} />
           </Section>
         </div>
       </aside>

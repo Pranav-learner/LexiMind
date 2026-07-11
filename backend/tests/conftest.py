@@ -35,6 +35,7 @@ from app.flashcards import models as _fc_models  # noqa: F401
 from app.ingestion import models as _ing_models  # noqa: F401
 from app.notes import models as _note_models  # noqa: F401
 from app.summaries import models as _sum_models  # noqa: F401
+from app.vision import models as _vis_models  # noqa: F401
 from app.workspaces import models as _ws_models  # noqa: F401
 
 from app.retrieval.schemas import derive_document_id
@@ -298,6 +299,10 @@ def app(engine, SessionFactory, fake_index):
     from app.ingestion.api import router as ingestion_router
     from app.ingestion.engines import FakeMultimodalEngine
     from app.ingestion.runner import InlineRunner as IngestionInlineRunner
+    from app.vision.api import get_vision_runner
+    from app.vision.api import router as vision_router
+    from app.vision.engines import FakeVisionEngine
+    from app.vision.runner import InlineRunner as VisionInlineRunner
     from app.notes.api import get_notes_engine, get_notes_runner
     from app.notes.api import router as notes_router
     from app.notes.api import tag_router as notes_tag_router
@@ -327,6 +332,7 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(citations_router)
     application.include_router(analytics_router)
     application.include_router(ingestion_router)
+    application.include_router(vision_router)
     application.dependency_overrides[get_db] = override_get_db
     application.dependency_overrides[get_index_context] = lambda: fake_index
     application.dependency_overrides[get_ingestor] = lambda: make_fake_ingest()
@@ -340,6 +346,8 @@ def app(engine, SessionFactory, fake_index):
     application.dependency_overrides[get_flashcards_runner] = lambda: FlashcardInlineRunner(SessionFactory, FakeFlashcardEngine())
     # Multimodal ingestion runs inline (synchronously) in tests with a deterministic fake engine.
     application.dependency_overrides[get_ingestion_runner] = lambda: IngestionInlineRunner(SessionFactory, FakeMultimodalEngine())
+    # Vision analysis runs inline (synchronously) in tests with a deterministic fake engine.
+    application.dependency_overrides[get_vision_runner] = lambda: VisionInlineRunner(SessionFactory, FakeVisionEngine())
     return application
 
 

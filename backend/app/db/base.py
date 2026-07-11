@@ -74,6 +74,7 @@ def init_db() -> None:
     from app.ingestion import models as _ing_models  # noqa: F401
     from app.notes import models as _note_models  # noqa: F401
     from app.summaries import models as _sum_models  # noqa: F401
+    from app.vision import models as _vis_models  # noqa: F401
     from app.workspaces import models as _ws_models  # noqa: F401
 
     Base.metadata.create_all(bind=engine)
