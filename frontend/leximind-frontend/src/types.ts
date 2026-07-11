@@ -1238,3 +1238,64 @@ export interface VisionSearchItem {
   page_number: number;
   confidence: number | null;
 }
+
+// ----------------------------------------------------------------- multimodal search
+// Contracts for the Multimodal Retrieval Engine (Phase 4, Module 3). Unified search across text,
+// OCR, images, diagrams, tables, and metadata with fusion + cross-modal reranking + explanation.
+
+export type SearchModality = "text" | "ocr" | "image" | "diagram" | "table" | "metadata";
+
+export interface SearchResult {
+  key: string;
+  modality: SearchModality;
+  source_type: string;
+  document_id: string | null;
+  chunk_id: string | null;
+  asset_id: string | null;
+  page_number: number | null;
+  title: string;
+  content: string;
+  confidence: number;
+  final_rank: number;
+  metadata: Record<string, unknown>;
+  explanation?: {
+    retriever: string;
+    source_type: string;
+    raw_score: number;
+    normalized_score: number;
+    rank_in_modality: number;
+    fusion_score: number;
+    fusion_contributions: Record<string, number>;
+    reranker_score: number | null;
+    contributing_modalities: string[];
+    final_rank: number;
+  } | null;
+}
+
+export interface RetrieverStat {
+  modality: string;
+  count: number;
+  latency_ms: number;
+}
+
+export interface SearchResponse {
+  query: string;
+  intents: string[];
+  detected: string[];
+  primary: string;
+  weights: Record<string, number>;
+  total: number;
+  total_ms: number;
+  fusion_ms: number;
+  rerank_ms: number;
+  retriever_stats: RetrieverStat[];
+  results: SearchResult[];
+}
+
+export interface SearchStats {
+  searches: number;
+  avg_latency_ms: number;
+  modality_usage: Record<string, number>;
+  indexed: Record<string, number>;
+  recent_queries: string[];
+}

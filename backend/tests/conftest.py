@@ -33,6 +33,7 @@ from app.citations import models as _cite_models  # noqa: F401
 from app.documents import models as _doc_models  # noqa: F401
 from app.flashcards import models as _fc_models  # noqa: F401
 from app.ingestion import models as _ing_models  # noqa: F401
+from app.mmretrieval import models as _mmr_models  # noqa: F401
 from app.notes import models as _note_models  # noqa: F401
 from app.summaries import models as _sum_models  # noqa: F401
 from app.vision import models as _vis_models  # noqa: F401
@@ -303,6 +304,9 @@ def app(engine, SessionFactory, fake_index):
     from app.vision.api import router as vision_router
     from app.vision.engines import FakeVisionEngine
     from app.vision.runner import InlineRunner as VisionInlineRunner
+    from app.mmretrieval.api import get_text_retriever
+    from app.mmretrieval.api import router as mmsearch_router
+    from app.mmretrieval.retrievers import LexicalTextRetriever
     from app.notes.api import get_notes_engine, get_notes_runner
     from app.notes.api import router as notes_router
     from app.notes.api import tag_router as notes_tag_router
@@ -333,6 +337,7 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(analytics_router)
     application.include_router(ingestion_router)
     application.include_router(vision_router)
+    application.include_router(mmsearch_router)
     application.dependency_overrides[get_db] = override_get_db
     application.dependency_overrides[get_index_context] = lambda: fake_index
     application.dependency_overrides[get_ingestor] = lambda: make_fake_ingest()
@@ -348,6 +353,8 @@ def app(engine, SessionFactory, fake_index):
     application.dependency_overrides[get_ingestion_runner] = lambda: IngestionInlineRunner(SessionFactory, FakeMultimodalEngine())
     # Vision analysis runs inline (synchronously) in tests with a deterministic fake engine.
     application.dependency_overrides[get_vision_runner] = lambda: VisionInlineRunner(SessionFactory, FakeVisionEngine())
+    # Multimodal search uses the faiss-free lexical text retriever in tests (no FAISS/torch).
+    application.dependency_overrides[get_text_retriever] = lambda: LexicalTextRetriever()
     return application
 
 

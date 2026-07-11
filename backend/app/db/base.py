@@ -72,6 +72,7 @@ def init_db() -> None:
     from app.documents import models as _doc_models  # noqa: F401
     from app.flashcards import models as _fc_models  # noqa: F401
     from app.ingestion import models as _ing_models  # noqa: F401
+    from app.mmretrieval import models as _mmr_models  # noqa: F401
     from app.notes import models as _note_models  # noqa: F401
     from app.summaries import models as _sum_models  # noqa: F401
     from app.vision import models as _vis_models  # noqa: F401
