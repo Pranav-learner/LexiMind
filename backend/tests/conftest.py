@@ -28,6 +28,7 @@ from app.db.base import Base, get_db
 # Import models so their tables are registered on Base.metadata before create_all.
 from app.auth import models as _auth_models  # noqa: F401
 from app.chat import models as _chat_models  # noqa: F401
+from app.citations import models as _cite_models  # noqa: F401
 from app.documents import models as _doc_models  # noqa: F401
 from app.flashcards import models as _fc_models  # noqa: F401
 from app.notes import models as _note_models  # noqa: F401
@@ -286,6 +287,7 @@ def app(engine, SessionFactory, fake_index):
     from app.documents.api import get_index_context, get_ingestor
     from app.documents.api import router as document_router
     from app.documents.reading_api import router as reading_router
+    from app.citations.api import router as citations_router
     from app.flashcards.api import get_flashcards_runner
     from app.flashcards.api import router as flashcards_router
     from app.flashcards.runner import InlineRunner as FlashcardInlineRunner
@@ -315,6 +317,7 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(notes_router)
     application.include_router(notes_tag_router)
     application.include_router(flashcards_router)
+    application.include_router(citations_router)
     application.dependency_overrides[get_db] = override_get_db
     application.dependency_overrides[get_index_context] = lambda: fake_index
     application.dependency_overrides[get_ingestor] = lambda: make_fake_ingest()

@@ -6,6 +6,7 @@ from app.api.query import router as query_router
 from app.api.upload import router as upload_router
 from app.auth.api import router as auth_router
 from app.chat.api import router as chat_router
+from app.citations.api import router as citations_router
 from app.db.base import init_db
 from app.documents.api import router as document_router
 from app.documents.reading_api import router as reading_router
@@ -43,6 +44,7 @@ app.include_router(summary_router)
 app.include_router(notes_router)
 app.include_router(notes_tag_router)
 app.include_router(flashcards_router)
+app.include_router(citations_router)
 app.include_router(upload_router)
 app.include_router(query_router)
 

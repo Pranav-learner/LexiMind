@@ -9,9 +9,10 @@ interface Props {
   citation: ChatCitation;
   index: number;
   onClick: (c: ChatCitation) => void;
+  onExplore?: (c: ChatCitation) => void; // Module 8: open the Citation Intelligence panel
 }
 
-function CitationCardBase({ citation, index, onClick }: Props) {
+function CitationCardBase({ citation, index, onClick, onExplore }: Props) {
   const pct = Math.round(Math.max(0, Math.min(1, citation.confidence || 0)) * 100);
   const snippet = citation.citation_text || "Cited source";
   return (
@@ -27,6 +28,19 @@ function CitationCardBase({ citation, index, onClick }: Props) {
         <span className="chat-citation-num">[{index + 1}]</span>
         <span className="chat-citation-page">Page {citation.page_number}</span>
         <span className="chat-citation-conf">{pct}%</span>
+        {onExplore && (
+          <span
+            className="chat-citation-explore"
+            role="button"
+            tabIndex={0}
+            title="Explore this citation (Knowledge Explorer)"
+            aria-label="Explore citation"
+            onClick={(e) => { e.stopPropagation(); onExplore(citation); }}
+            onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); onExplore(citation); } }}
+          >
+            🔎
+          </span>
+        )}
       </span>
       <span className="chat-citation-text">{snippet}</span>
       <span className="chat-citation-bar" aria-hidden="true">

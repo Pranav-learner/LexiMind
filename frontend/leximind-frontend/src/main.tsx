@@ -9,6 +9,7 @@ import './styles/chat.css'
 import './styles/summary.css'
 import './styles/notes.css'
 import './styles/flashcards.css'
+import './styles/citations.css'
 import App from './App.tsx'
 import { AuthProvider } from './context/AuthContext'
 

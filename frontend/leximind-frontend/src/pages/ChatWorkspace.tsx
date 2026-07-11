@@ -140,6 +140,14 @@ function ChatWindow({ ws, conversationId, onCitation, onActivity }: WindowProps)
     [ws, navigate],
   );
 
+  // Module 8: open the Knowledge Explorer's Citation Intelligence panel for this evidence.
+  const exploreCitation = useCallback(
+    (c: ChatCitation) => {
+      navigate(`/workspace/${ws}/knowledge?chunk=${encodeURIComponent(c.chunk_id)}`);
+    },
+    [ws, navigate],
+  );
+
   // Module 7: generate a flashcard deck from this conversation (routed through the flashcards page).
   const makeFlashcards = useCallback(
     (m: ChatMessageType) => {
@@ -277,6 +285,7 @@ function ChatWindow({ ws, conversationId, onCitation, onActivity }: WindowProps)
                 streaming={streaming && m.id === streamingId}
                 onCopy={(t) => navigator.clipboard?.writeText(t)}
                 onCitation={onCitation}
+                onExploreCitation={exploreCitation}
                 onRegenerate={
                   !streaming && m.id === lastAssistantId && m.role === "assistant"
                     ? () => regenerate(m)

@@ -19,6 +19,7 @@ interface Props {
   onEdit?: (message: ChatMessageType, next: string) => void;
   onRetry?: (message: ChatMessageType) => void;
   onCitation: (c: ChatCitation) => void;
+  onExploreCitation?: (c: ChatCitation) => void; // Module 8: open the Citation Intelligence panel
   onSaveAsNote?: (message: ChatMessageType) => void; // Module 6: persist an answer as a Note
   onFlashcards?: (message: ChatMessageType) => void; // Module 7: generate flashcards from the chat
 }
@@ -31,6 +32,7 @@ function ChatMessageBase({
   onEdit,
   onRetry,
   onCitation,
+  onExploreCitation,
   onSaveAsNote,
   onFlashcards,
 }: Props) {
@@ -102,7 +104,7 @@ function ChatMessageBase({
         {!isUser && message.citations && message.citations.length > 0 && (
           <div className="chat-citations">
             {message.citations.map((c, i) => (
-              <CitationCard key={c.id || i} citation={c} index={i} onClick={onCitation} />
+              <CitationCard key={c.id || i} citation={c} index={i} onClick={onCitation} onExplore={onExploreCitation} />
             ))}
           </div>
         )}

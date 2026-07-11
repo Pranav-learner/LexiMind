@@ -82,6 +82,9 @@ export default function WorkspaceDetail() {
             <Link className="ws-btn primary" to={`/workspace/${ws.id}/flashcards`}>
               🎴 Flashcards
             </Link>
+            <Link className="ws-btn primary" to={`/workspace/${ws.id}/knowledge`}>
+              🔎 Knowledge
+            </Link>
             <Link className="ws-btn primary" to={`/workspace/${ws.id}/library`}>
               📚 Open Document Library
             </Link>

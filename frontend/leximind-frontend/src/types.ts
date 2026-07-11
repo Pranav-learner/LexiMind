@@ -803,3 +803,110 @@ export interface DeckListParams {
   sort_by?: "created_at" | "updated_at" | "name" | "card_count";
   order?: SortOrder;
 }
+
+// ----------------------------------------------------------------- citation intelligence
+// Contracts for Citation Intelligence & Knowledge Explorer (Phase 3, Module 8). A derived index
+// over Modules 4–7 citations. `document_id` is the VECTOR document id (resolve via
+// GET .../documents/by-vector/{id}).
+
+export type CitationReferenceType = "message" | "summary" | "note" | "flashcard";
+
+export interface CitationRef {
+  id: string;
+  reference_type: CitationReferenceType;
+  message_id: string | null;
+  summary_id: string | null;
+  note_id: string | null;
+  flashcard_id: string | null;
+  ref_parent_id: string | null;   // conversation / summary / note / deck id (navigation target)
+  ref_child_id: string | null;    // message / section / card id
+  ref_title: string;
+}
+
+export interface CitationIntel {
+  id: string;
+  workspace_id: string;
+  document_id: string | null;
+  chunk_id: string | null;
+  page_number: number | null;
+  paragraph_number: number | null;
+  citation_text: string;
+  confidence: number | null;
+  retrieval_score: number | null;
+  reranker_score: number | null;
+  evidence_score: number | null;
+  reference_count: number;
+  created_at: string;
+}
+
+export interface CitationDocumentContext {
+  document_id: string | null;
+  citation_count: number;
+  reference_count: number;
+}
+
+export type CitationDetail = CitationIntel & {
+  references: CitationRef[];
+  references_by_type: Record<string, number>;
+  document: CitationDocumentContext | null;
+};
+
+export interface RelatedCitation {
+  citation_id: string | null;
+  chunk_id: string | null;
+  document_id: string | null;
+  relationship: "co_reference" | "same_document" | string;
+  strength: number;
+  page_number: number | null;
+  citation_text: string;
+}
+
+export interface RelatedKnowledge {
+  citation_id: string;
+  related: RelatedCitation[];
+  references_by_type: Record<string, number>;
+  same_document_citations: CitationIntel[];
+}
+
+export interface ExplainFactor {
+  label: string;
+  detail: string;
+  score: number | null;
+}
+
+export interface CitationExplanation {
+  citation_id: string;
+  summary: string;
+  factors: ExplainFactor[];
+  retrieval_path: string[];
+}
+
+export interface CitationStats {
+  total_citations: number;
+  total_references: number;
+  documents_cited: number;
+  avg_confidence: number;
+  high_confidence: number;
+  references_by_type: Record<string, number>;
+  most_referenced: CitationIntel[];
+}
+
+export interface CitationListResponse {
+  items: CitationIntel[];
+  total: number;
+  page: number;
+  page_size: number;
+  pages: number;
+}
+
+export interface CitationSearchParams {
+  page?: number;
+  page_size?: number;
+  keyword?: string;
+  document_id?: string;
+  page_number?: number;
+  reference_type?: CitationReferenceType;
+  min_confidence?: number;
+  sort_by?: "confidence" | "reference_count" | "created_at" | "page_number";
+  order?: SortOrder;
+}

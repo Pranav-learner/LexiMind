@@ -67,6 +67,7 @@ def init_db() -> None:
     # Imported for their side effect of registering mappers on Base.metadata.
     from app.auth import models as _auth_models  # noqa: F401
     from app.chat import models as _chat_models  # noqa: F401
+    from app.citations import models as _cite_models  # noqa: F401
     from app.documents import models as _doc_models  # noqa: F401
     from app.flashcards import models as _fc_models  # noqa: F401
     from app.notes import models as _note_models  # noqa: F401
