@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.health import router as health_router
 from app.api.query import router as query_router
+from app.analytics.api import router as analytics_router
 from app.api.upload import router as upload_router
 from app.auth.api import router as auth_router
 from app.chat.api import router as chat_router
@@ -45,6 +46,7 @@ app.include_router(notes_router)
 app.include_router(notes_tag_router)
 app.include_router(flashcards_router)
 app.include_router(citations_router)
+app.include_router(analytics_router)
 app.include_router(upload_router)
 app.include_router(query_router)
 
