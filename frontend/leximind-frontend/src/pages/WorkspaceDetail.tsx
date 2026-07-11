@@ -68,8 +68,12 @@ export default function WorkspaceDetail() {
         </div>
 
         <div className="ws-page-title">
-          <div />
-          <div style={{ display: "flex", gap: 10 }}>
+          <div>
+            <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/dashboard`}>
+              📊 Open Dashboard
+            </Link>
+          </div>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
             <Link className="ws-btn primary" to={`/workspace/${ws.id}/chat`}>
               💬 Open Chat
             </Link>

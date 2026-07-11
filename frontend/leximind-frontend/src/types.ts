@@ -910,3 +910,154 @@ export interface CitationSearchParams {
   sort_by?: "confidence" | "reference_count" | "created_at" | "page_number";
   order?: SortOrder;
 }
+
+// ----------------------------------------------------------------- dashboard / analytics
+// Contracts for the Knowledge Dashboard & Analytics Platform (Phase 3, Module 9). Read-only
+// aggregation over every module. Payloads are plain dicts on the backend; typed here for the UI.
+
+export interface DashKnowledge {
+  workspace_name: string;
+  documents: number;
+  archived_documents: number;
+  pages: number;
+  chunks: number;
+  embeddings: number;
+  words: number;
+  storage_bytes: number;
+  indexed_files: number;
+  ready_files: number;
+  avg_document_bytes: number;
+  embedding_model: string;
+  languages: Array<{ language: string; count: number }>;
+  topics: string[];
+  recent_uploads: Array<{ id: string; display_name: string; created_at: string | null; page_count: number; processing_status: string }>;
+  index_health: string;
+  retrieval_health: string;
+  context_engine_health: string;
+}
+
+export interface DashAiUsage {
+  questions_asked: number;
+  conversations: number;
+  messages: number;
+  summaries_generated: number;
+  notes_generated: number;
+  flashcards_generated: number;
+  citation_usage: number;
+  avg_response_time_ms: number;
+  avg_retrieval_ms: number;
+  avg_context_size: number;
+  avg_token_usage: number;
+  estimated_cost_usd: number;
+  total_tokens: number;
+  model_usage: Array<{ model: string; count: number }>;
+}
+
+export interface DashLearning {
+  study_streak_days: number;
+  cards_reviewed: number;
+  reviews_today: number;
+  retention: number;
+  accuracy: number;
+  avg_mastery: number;
+  mastered_cards: number;
+  due_today: number;
+  new_cards: number;
+  notes_created: number;
+  summaries_created: number;
+  documents_completed: number;
+  reading_minutes: number;
+  daily_activity: Array<{ date: string; reviews: number; correct: number }>;
+}
+
+export interface DashRetrieval {
+  hybrid_enabled: boolean;
+  dense_enabled: boolean;
+  bm25_enabled: boolean;
+  rrf_enabled: boolean;
+  reranker_enabled: boolean;
+  compression_enabled: boolean;
+  dense_top_k: number;
+  sparse_top_k: number;
+  final_top_k: number;
+  rrf_k: number;
+  dedup_threshold: number;
+  context_window: number;
+  embedding_model: string;
+  avg_retrieval_ms: number;
+  avg_context_size: number;
+  context_utilization: number;
+  retrieved_answers: number;
+  note: string;
+}
+
+export interface DashDocument {
+  id: string;
+  display_name: string;
+  vector_document_id: string;
+  pages: number;
+  chunks: number;
+  embeddings: number;
+  words: number;
+  file_size: number;
+  language: string;
+  citation_count: number;
+  retrieval_frequency: number;
+  question_frequency: number;
+  summaries: number;
+  notes: number;
+  flashcards: number;
+  reading_page: number;
+  reading_progress: number;
+  completed: boolean;
+  last_opened: string | null;
+  top_pages: Array<{ page: number; count: number }>;
+  created_at: string | null;
+}
+
+export interface DashActivityEvent {
+  type: string;
+  title: string;
+  timestamp: string | null;
+  icon: string;
+  target_id: string | null;
+  route: string | null;
+}
+
+export interface DashInsight {
+  id: string;
+  kind: string;
+  severity: "positive" | "info" | "warning";
+  icon: string;
+  title: string;
+  message: string;
+  action_label: string | null;
+  action_route: string | null;
+}
+
+export interface ChartPoint {
+  date?: string;
+  value?: number;
+  label?: string;
+}
+
+export interface DashChartSeries {
+  key: string;
+  label: string;
+  kind: "line" | "bar" | "donut" | "heatmap";
+  points: ChartPoint[];
+}
+
+export interface DashCharts {
+  series: DashChartSeries[];
+}
+
+export interface DashboardOverview {
+  knowledge: DashKnowledge;
+  ai_usage: DashAiUsage;
+  learning: DashLearning;
+  retrieval: DashRetrieval;
+  charts: DashCharts;
+  activity: { items: DashActivityEvent[] };
+  insights: DashInsight[];
+}

@@ -22,6 +22,7 @@ const FlashcardsDashboard = lazy(() => import("./pages/FlashcardsDashboard"));
 const DeckView = lazy(() => import("./pages/DeckView"));
 const ReviewSession = lazy(() => import("./pages/ReviewSession"));
 const KnowledgeExplorer = lazy(() => import("./pages/KnowledgeExplorer"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -158,6 +159,14 @@ export default function App() {
           element={
             <RequireAuth>
               <KnowledgeExplorer />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/workspace/:workspaceId/dashboard"
+          element={
+            <RequireAuth>
+              <Dashboard />
             </RequireAuth>
           }
         />
