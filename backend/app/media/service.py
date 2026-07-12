@@ -117,9 +117,8 @@ class MediaService:
         doc = doc_service.create_pending(
             owner_id, workspace_id, filename=safe_name, vector_document_id=vector_document_id,
             storage_path="", file_type=ext, mime_type=validation.mime_for(ext), file_size=len(data),
+            media_type=kind,  # Document.media_type is a free-form column designed for audio/video.
         )
-        # Mark as a media asset (Document.media_type is a free-form column designed for this).
-        doc.media_type = kind
         doc.processing_status = "uploaded"
         doc.processing_stage = "uploaded"
         doc.upload_progress = 100
