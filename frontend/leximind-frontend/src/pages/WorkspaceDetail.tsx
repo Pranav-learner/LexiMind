@@ -101,6 +101,9 @@ export default function WorkspaceDetail() {
             <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/media-ai`}>
               🎧 Media AI Workspace
             </Link>
+            <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/orchestration`}>
+              🕹️ Agent Orchestration
+            </Link>
             <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/agents`}>
               🧑‍🔬 Agent Workspace
             </Link>

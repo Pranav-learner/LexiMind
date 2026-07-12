@@ -32,6 +32,7 @@ const MediaAIWorkspace = lazy(() => import("./pages/MediaAIWorkspace"));
 const AgentDebugPanel = lazy(() => import("./pages/AgentDebugPanel"));
 const AgentWorkspace = lazy(() => import("./pages/AgentWorkspace"));
 const VerificationInspector = lazy(() => import("./pages/VerificationInspector"));
+const OrchestrationDashboard = lazy(() => import("./pages/OrchestrationDashboard"));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -248,6 +249,14 @@ export default function App() {
           element={
             <RequireAuth>
               <VerificationInspector />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/workspace/:workspaceId/orchestration"
+          element={
+            <RequireAuth>
+              <OrchestrationDashboard />
             </RequireAuth>
           }
         />

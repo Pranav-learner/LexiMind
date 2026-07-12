@@ -6,6 +6,7 @@ from app.api.query import router as query_router
 from app.agents.api import router as agents_router
 from app.agents.task_api import router as agent_tasks_router
 from app.reasoning.api import router as verification_router
+from app.orchestration.api import router as orchestration_router
 from app.analytics.api import router as analytics_router
 from app.api.upload import router as upload_router
 from app.auth.api import router as auth_router
@@ -65,6 +66,7 @@ app.include_router(mediaworkspace_router)
 app.include_router(agents_router)
 app.include_router(agent_tasks_router)
 app.include_router(verification_router)
+app.include_router(orchestration_router)
 app.include_router(tintel_router)
 app.include_router(tretrieval_router)
 app.include_router(vision_router)

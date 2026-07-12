@@ -39,6 +39,7 @@ from app.mediaworkspace import models as _mediaws_models  # noqa: F401
 from app.mmcontext import models as _mmc_models  # noqa: F401
 from app.mmretrieval import models as _mmr_models  # noqa: F401
 from app.notes import models as _note_models  # noqa: F401
+from app.orchestration import models as _orch_models  # noqa: F401
 from app.reasoning import models as _reason_models  # noqa: F401
 from app.summaries import models as _sum_models  # noqa: F401
 from app.tintel import models as _tintel_models  # noqa: F401
@@ -323,6 +324,7 @@ def app(engine, SessionFactory, fake_index):
     from app.agents.api import router as agents_router
     from app.agents.task_api import router as agent_tasks_router
     from app.reasoning.api import router as verification_router
+    from app.orchestration.api import router as orchestration_router
     from app.vision.api import get_vision_runner
     from app.vision.api import router as vision_router
     from app.vision.engines import FakeVisionEngine
@@ -368,6 +370,7 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(agents_router)
     application.include_router(agent_tasks_router)
     application.include_router(verification_router)
+    application.include_router(orchestration_router)
     application.include_router(tintel_router)
     application.include_router(tretrieval_router)
     application.include_router(vision_router)
