@@ -1,0 +1,45 @@
+/* Evaluation Workspace (Phase 8, Module 1). */
+.ev-page { max-width: 1300px; margin: 0 auto; padding: 20px 24px 60px; }
+.ev-header { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+.ev-header h1 { font-size: 22px; margin: 0; }
+.ev-header a { color: #6366f1; text-decoration: none; font-size: 14px; }
+.ev-muted { color: #94a3b8; font-size: 13px; }
+.ev-error { color: #b91c1c; background: #fef2f2; padding: 6px 12px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+
+.ev-tabs { display: flex; gap: 4px; border-bottom: 1px solid #e2e8f0; margin-bottom: 16px; }
+.ev-tabs button { border: none; background: none; padding: 8px 16px; font-size: 13px; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; text-transform: capitalize; }
+.ev-tabs button.is-active { color: #6366f1; border-bottom-color: #6366f1; font-weight: 600; }
+
+.ev-stat-row { display: flex; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
+.ev-stat { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 18px; display: flex; flex-direction: column; min-width: 100px; }
+.ev-stat-v { font-size: 22px; font-weight: 800; color: #334155; }
+.ev-stat-l { font-size: 11px; color: #94a3b8; }
+
+.ev-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.ev-table th, .ev-table td { border-bottom: 1px solid #eef2f7; padding: 8px 10px; text-align: left; vertical-align: top; }
+.ev-table th { color: #64748b; font-size: 11px; text-transform: uppercase; }
+.ev-metric-cell { display: flex; flex-direction: column; gap: 2px; }
+.ev-mini { font-size: 11px; font-variant-numeric: tabular-nums; }
+
+.ev-run-config { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; padding: 14px; background: #f8fafc;
+  border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 16px; }
+.ev-run-config label { font-size: 12px; color: #475569; display: flex; align-items: center; gap: 6px; }
+.ev-run-config select { font: inherit; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 7px; }
+.ev-check { gap: 5px !important; }
+.ev-run-btn { padding: 9px 18px; border: none; border-radius: 8px; background: #6366f1; color: #fff; font-weight: 700; cursor: pointer; }
+.ev-run-btn:disabled { opacity: .6; }
+
+.ev-result-head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.ev-result-head h3 { margin: 0; font-size: 17px; }
+.ev-gate { color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+.ev-gate-reasons { margin: 0 0 12px; padding-left: 18px; color: #b45309; font-size: 12.5px; }
+.ev-metrics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin-bottom: 18px; }
+.ev-metric { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 12px; display: flex; flex-direction: column; }
+.ev-metric-name { font-size: 11px; color: #64748b; }
+.ev-metric-val { font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.ev-compare .ev-cmp-pick { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; }
+.ev-cmp-pick select { font: inherit; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 7px; }
+.ev-cmp-pick button { padding: 8px 16px; border: none; border-radius: 8px; background: #6366f1; color: #fff; font-weight: 700; cursor: pointer; }
+.ev-winner { font-size: 15px; color: #334155; }
+.ev-compare h4, .ev-run h4 { font-size: 12px; text-transform: uppercase; color: #64748b; margin: 16px 0 6px; }

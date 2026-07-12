@@ -37,6 +37,7 @@ const KnowledgeGraphInspector = lazy(() => import("./pages/KnowledgeGraphInspect
 const SemanticMemoryExplorer = lazy(() => import("./pages/SemanticMemoryExplorer"));
 const GraphReasoningInspector = lazy(() => import("./pages/GraphReasoningInspector"));
 const KnowledgeWorkspace = lazy(() => import("./pages/KnowledgeWorkspace"));
+const EvaluationWorkspace = lazy(() => import("./pages/EvaluationWorkspace"));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -293,6 +294,14 @@ export default function App() {
           element={
             <RequireAuth>
               <KnowledgeWorkspace />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/workspace/:workspaceId/evaluation"
+          element={
+            <RequireAuth>
+              <EvaluationWorkspace />
             </RequireAuth>
           }
         />

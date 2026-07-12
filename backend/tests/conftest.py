@@ -32,6 +32,7 @@ from app.auth import models as _auth_models  # noqa: F401
 from app.chat import models as _chat_models  # noqa: F401
 from app.citations import models as _cite_models  # noqa: F401
 from app.documents import models as _doc_models  # noqa: F401
+from app.evaluation import models as _eval_models  # noqa: F401
 from app.flashcards import models as _fc_models  # noqa: F401
 from app.ingestion import models as _ing_models  # noqa: F401
 from app.knowledge import models as _kg_models  # noqa: F401
@@ -335,6 +336,7 @@ def app(engine, SessionFactory, fake_index):
     from app.graphreason.api import router as graphreason_router
     from app.knowledgeworkspace.api import get_graph_chat_engine
     from app.knowledgeworkspace.api import router as knowledgeworkspace_router
+    from app.evaluation.api import router as evaluation_router
     from app.knowledgeworkspace.engine import GraphChatEngine
     from app.knowledge.runner import InlineRunner as GraphInlineRunner
     from app.vision.api import get_vision_runner
@@ -387,6 +389,7 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(memory_router)
     application.include_router(graphreason_router)
     application.include_router(knowledgeworkspace_router)
+    application.include_router(evaluation_router)
     application.include_router(tintel_router)
     application.include_router(tretrieval_router)
     application.include_router(vision_router)

@@ -11,6 +11,7 @@ from app.knowledge.api import router as knowledge_router
 from app.memory.api import router as memory_router
 from app.graphreason.api import router as graphreason_router
 from app.knowledgeworkspace.api import router as knowledgeworkspace_router
+from app.evaluation.api import router as evaluation_router
 from app.analytics.api import router as analytics_router
 from app.api.upload import router as upload_router
 from app.auth.api import router as auth_router
@@ -75,6 +76,7 @@ app.include_router(knowledge_router)
 app.include_router(memory_router)
 app.include_router(graphreason_router)
 app.include_router(knowledgeworkspace_router)
+app.include_router(evaluation_router)
 app.include_router(tintel_router)
 app.include_router(tretrieval_router)
 app.include_router(vision_router)
