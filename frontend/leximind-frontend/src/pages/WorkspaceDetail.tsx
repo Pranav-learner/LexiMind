@@ -104,6 +104,9 @@ export default function WorkspaceDetail() {
             <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/graph`}>
               🕸️ Knowledge Graph
             </Link>
+            <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/memory`}>
+              🧠 Semantic Memory
+            </Link>
             <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/orchestration`}>
               🕹️ Agent Orchestration
             </Link>

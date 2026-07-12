@@ -172,8 +172,9 @@ def test_research_agent_full_run():
 
 def test_research_agent_reports_gaps_when_no_evidence():
     ctx = _Ctx()
-    empty = _FakeExec(per_tool={"workspace_search": ToolResult(tool="workspace_search", ok=True,
-                                                               context_text="", citations=[])})
+    _mt = lambda name: ToolResult(tool=name, ok=True, context_text="", citations=[])
+    empty = _FakeExec(per_tool={"workspace_search": _mt("workspace_search"),
+                                "graph_search": _mt("graph_search")})   # graph_search is now a research tool too
     task = AgentTask(task_type="research", objective="obscure topic", workspace_id="ws", owner_id="o")
     res = ResearchAgent().run(task, ctx, executor=empty, events=ctx.events)
     assert res.success and res.knowledge_gaps                    # unanswered question flagged
