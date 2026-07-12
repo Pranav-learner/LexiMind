@@ -34,14 +34,14 @@ class ToolRegistry:
         from app.agents.tools.generation_tools import (
             CreateNoteTool, GenerateFlashcardsTool, GenerateNotesTool, GenerateSummaryTool,
         )
-        from app.agents.tools.graph_tools import GraphSearchTool
+        from app.agents.tools.graph_tools import GraphReasonTool, GraphSearchTool
         from app.agents.tools.search_tools import (
             QueryDashboardTool, RetrieveTranscriptTool, TemporalSearchTool, UnifiedMediaSearchTool,
             WorkspaceSearchTool,
         )
         for cls in (WorkspaceSearchTool, TemporalSearchTool, UnifiedMediaSearchTool, RetrieveTranscriptTool,
-                    QueryDashboardTool, GraphSearchTool, GenerateSummaryTool, GenerateNotesTool,
-                    GenerateFlashcardsTool, CreateNoteTool):
+                    QueryDashboardTool, GraphSearchTool, GraphReasonTool, GenerateSummaryTool,
+                    GenerateNotesTool, GenerateFlashcardsTool, CreateNoteTool):
             self.register(cls())
         self._loaded = True
 
@@ -91,7 +91,7 @@ class AgentRegistry:
             name="workspace_agent", version="1.0",
             description="General workspace agent: plans, selects tools, retrieves, and answers.",
             capabilities=["planning", "tool_use", "retrieval", "generation", "answering"],
-            default_tools=["workspace_search", "graph_search", "temporal_search", "unified_media_search",
+            default_tools=["workspace_search", "graph_search", "graph_reason", "temporal_search", "unified_media_search",
                            "retrieve_transcript", "query_dashboard", "generate_summary",
                            "generate_notes", "generate_flashcards", "create_note"],
             status="available", implemented=True))

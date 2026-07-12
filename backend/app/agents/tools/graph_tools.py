@@ -42,3 +42,28 @@ class GraphSearchTool(BaseTool):
             output={"entities": res["seed_count"], "neighborhood": res["neighborhood"]["nodes"],
                     "hits": len(res["hits"])},
             context_text=res["context_text"], citations=res["citations"])
+
+
+class GraphReasonTool(BaseTool):
+    """Reuses the Phase-7 M3 graph reasoner (multi-hop paths + inferred relationships + confidence)."""
+
+    spec = ToolSpec(
+        name="graph_reason", version="1.0", category="search",
+        description="Reason over the knowledge graph: multi-hop paths, inferred relationships, confidence.",
+        params=[ToolParam("query", "string", False, "Reasoning query (defaults to the user request)."),
+                ToolParam("hops", "integer", False, "Reasoning depth (default 3).")],
+        permissions=["search"], parallel_safe=True, cost_weight=1.3)
+
+    def execute(self, ctx, args: Dict[str, Any]) -> ToolResult:
+        from app.knowledge.repository import GraphRepository
+        if GraphRepository(ctx.db).entity_count(ctx.workspace_id, ctx.owner_id) == 0:
+            return self._result(output={"paths": 0, "inferences": 0}, context_text="")
+        from app.graphreason.service import GraphReasoningService
+        res = GraphReasoningService(ctx.db).reason(
+            ctx.workspace_id, ctx.owner_id, query=_q(ctx, args), hops=int(args.get("hops", 3)),
+            verify=False, persist=False, persist_inferences=False)
+        conf = (res.get("confidence") or {}).get("overall")
+        return self._result(
+            output={"paths": len(res["paths"]), "inferences": len(res["inferences"]),
+                    "confidence": conf, "root_causes": len(res.get("root_causes", []))},
+            context_text=res["context_text"], citations=res["citations"])

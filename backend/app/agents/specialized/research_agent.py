@@ -64,7 +64,7 @@ class ResearchAgent(BaseSpecializedAgent):
         Phase-7 M2: `graph_search` (Semantic Memory) is always included as a retrieval provider — it is a
         cheap no-op when the workspace has no knowledge graph yet, and adds graph knowledge when it does.
         """
-        tools = ["workspace_search", "graph_search"]
+        tools = ["workspace_search", "graph_search", "graph_reason"]
         media = bool(_MEDIA_CUE.search(task.objective or "")) or self.count_media(ctx, task.document_ids) > 0
         if media:
             tools.append("temporal_search")
