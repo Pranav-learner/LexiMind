@@ -39,6 +39,7 @@ const GraphReasoningInspector = lazy(() => import("./pages/GraphReasoningInspect
 const KnowledgeWorkspace = lazy(() => import("./pages/KnowledgeWorkspace"));
 const EvaluationWorkspace = lazy(() => import("./pages/EvaluationWorkspace"));
 const OperationsWorkspace = lazy(() => import("./pages/OperationsWorkspace"));
+const OptimizationWorkspace = lazy(() => import("./pages/OptimizationWorkspace"));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -311,6 +312,14 @@ export default function App() {
           element={
             <RequireAuth>
               <OperationsWorkspace />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/workspace/:workspaceId/optimization"
+          element={
+            <RequireAuth>
+              <OptimizationWorkspace />
             </RequireAuth>
           }
         />

@@ -13,6 +13,7 @@ from app.graphreason.api import router as graphreason_router
 from app.knowledgeworkspace.api import router as knowledgeworkspace_router
 from app.evaluation.api import router as evaluation_router
 from app.observability.api import router as observability_router
+from app.optimization.api import router as optimization_router
 from app.analytics.api import router as analytics_router
 from app.api.upload import router as upload_router
 from app.auth.api import router as auth_router
@@ -79,6 +80,7 @@ app.include_router(graphreason_router)
 app.include_router(knowledgeworkspace_router)
 app.include_router(evaluation_router)
 app.include_router(observability_router)
+app.include_router(optimization_router)
 app.include_router(tintel_router)
 app.include_router(tretrieval_router)
 app.include_router(vision_router)

@@ -45,6 +45,7 @@ from app.mmcontext import models as _mmc_models  # noqa: F401
 from app.mmretrieval import models as _mmr_models  # noqa: F401
 from app.notes import models as _note_models  # noqa: F401
 from app.observability import models as _obs_models  # noqa: F401
+from app.optimization import models as _opt_models  # noqa: F401
 from app.orchestration import models as _orch_models  # noqa: F401
 from app.reasoning import models as _reason_models  # noqa: F401
 from app.summaries import models as _sum_models  # noqa: F401
@@ -339,6 +340,7 @@ def app(engine, SessionFactory, fake_index):
     from app.knowledgeworkspace.api import router as knowledgeworkspace_router
     from app.evaluation.api import router as evaluation_router
     from app.observability.api import router as observability_router
+    from app.optimization.api import router as optimization_router
     from app.knowledgeworkspace.engine import GraphChatEngine
     from app.knowledge.runner import InlineRunner as GraphInlineRunner
     from app.vision.api import get_vision_runner
@@ -393,6 +395,7 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(knowledgeworkspace_router)
     application.include_router(evaluation_router)
     application.include_router(observability_router)
+    application.include_router(optimization_router)
     application.include_router(tintel_router)
     application.include_router(tretrieval_router)
     application.include_router(vision_router)
