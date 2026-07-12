@@ -33,6 +33,7 @@ const AgentDebugPanel = lazy(() => import("./pages/AgentDebugPanel"));
 const AgentWorkspace = lazy(() => import("./pages/AgentWorkspace"));
 const VerificationInspector = lazy(() => import("./pages/VerificationInspector"));
 const OrchestrationDashboard = lazy(() => import("./pages/OrchestrationDashboard"));
+const KnowledgeGraphInspector = lazy(() => import("./pages/KnowledgeGraphInspector"));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -257,6 +258,14 @@ export default function App() {
           element={
             <RequireAuth>
               <OrchestrationDashboard />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/workspace/:workspaceId/graph"
+          element={
+            <RequireAuth>
+              <KnowledgeGraphInspector />
             </RequireAuth>
           }
         />

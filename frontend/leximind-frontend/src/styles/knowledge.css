@@ -1,0 +1,58 @@
+/* Knowledge Graph Inspector (Phase 7, Module 1). */
+.kg-page { max-width: 1300px; margin: 0 auto; padding: 20px 24px 60px; }
+.kg-header { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+.kg-header h1 { font-size: 22px; margin: 0; flex: 1; }
+.kg-header a { color: #6366f1; text-decoration: none; font-size: 14px; }
+.kg-build { padding: 8px 16px; border: none; border-radius: 8px; background: #6366f1; color: #fff; font-weight: 600; cursor: pointer; }
+.kg-build:disabled { opacity: .6; }
+.kg-error { color: #dc2626; font-size: 13px; }
+
+.kg-stats-bar { display: flex; gap: 18px; font-size: 13px; color: #475569; padding: 10px 14px;
+  background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 14px; }
+.kg-tabs { display: flex; gap: 4px; border-bottom: 1px solid #e2e8f0; margin-bottom: 16px; }
+.kg-tabs button { border: none; background: none; padding: 8px 14px; font-size: 13px; color: #64748b;
+  cursor: pointer; border-bottom: 2px solid transparent; text-transform: capitalize; }
+.kg-tabs button.is-active { color: #6366f1; border-bottom-color: #6366f1; font-weight: 600; }
+.kg-muted { color: #94a3b8; }
+
+.kg-grid { display: grid; grid-template-columns: 380px 1fr; gap: 16px; align-items: start; }
+@media (max-width: 900px) { .kg-grid { grid-template-columns: 1fr; } }
+.kg-filters { display: flex; gap: 8px; margin-bottom: 10px; }
+.kg-filters input, .kg-filters select { font: inherit; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 8px; }
+.kg-filters input { flex: 1; }
+
+.kg-entities { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 4px; max-height: 640px; overflow-y: auto; }
+.kg-entities li { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid #eef2f7;
+  border-radius: 8px; cursor: pointer; }
+.kg-entities li:hover { border-color: #a5b4fc; background: #f8fafc; }
+.kg-entities li.is-active { border-color: #6366f1; box-shadow: 0 0 0 1px #6366f1; }
+.kg-ent-type { color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; text-transform: capitalize; white-space: nowrap; }
+.kg-ent-name { flex: 1; font-size: 13.5px; color: #1e293b; }
+.kg-ent-meta { font-size: 11px; color: #94a3b8; white-space: nowrap; }
+
+.kg-detail-panel { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; min-height: 320px; }
+.kg-detail-panel h2 { font-size: 19px; margin: 0 0 6px; display: flex; align-items: center; gap: 8px; }
+.kg-detail-meta { font-size: 12px; color: #64748b; margin-bottom: 10px; }
+.kg-empty { color: #94a3b8; text-align: center; padding: 90px 20px; }
+.kg-rels { list-style: none; padding: 0; margin: 6px 0 0; display: flex; flex-direction: column; gap: 5px; }
+.kg-rels li { display: flex; gap: 10px; align-items: center; font-size: 13px; padding: 5px 0; border-bottom: 1px solid #f1f5f9; }
+.kg-rel-type { font-size: 11px; font-weight: 700; color: #6366f1; text-transform: uppercase; min-width: 90px; }
+.kg-rel-edge { flex: 1; color: #334155; }
+.kg-rel-w { color: #94a3b8; font-size: 11px; }
+
+.kg-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.kg-table th, .kg-table td { border-bottom: 1px solid #eef2f7; padding: 7px 10px; text-align: left; }
+.kg-table th { color: #64748b; font-size: 11px; text-transform: uppercase; }
+
+.kg-stats-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.kg-bar-row { display: flex; align-items: center; gap: 8px; font-size: 12.5px; margin-bottom: 4px; }
+.kg-bar-label { display: flex; align-items: center; gap: 6px; min-width: 130px; text-transform: capitalize; color: #475569; }
+.kg-dot { width: 9px; height: 9px; border-radius: 50%; }
+.kg-bar { flex: 1; height: 10px; }
+.kg-bar-fill { display: block; height: 10px; border-radius: 5px; }
+
+.kg-validation .kg-ok { color: #15803d; font-weight: 600; }
+.kg-validation .kg-bad { color: #b91c1c; font-weight: 600; }
+.kg-issue { font-size: 12.5px; padding: 6px 10px; border-radius: 6px; margin-bottom: 5px; border-left: 3px solid; }
+.kg-issue-err { background: #fef2f2; border-left-color: #ef4444; }
+.kg-issue-warn { background: #fffbeb; border-left-color: #f59e0b; }

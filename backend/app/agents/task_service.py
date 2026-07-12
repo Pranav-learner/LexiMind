@@ -66,6 +66,22 @@ class AgentTaskService:
             except Exception as e:  # verification is advisory — degrade, never crash the task
                 result.verification = {"status": "warning", "error": f"verification failed: {e}"}
 
+        # Phase-7 M1 — agents contribute knowledge to the graph (opt-in; reuses the SAME extraction
+        # pipeline, no duplicated logic). Best-effort: a graph hiccup never affects the agent run.
+        if task.params.get("contribute_graph") and result.success and result.output is not None:
+            try:
+                from app.knowledge.repository import GraphRepository
+                from app.knowledge.service import KnowledgeGraphService
+                out = result.output.to_dict()
+                text = (out.get("summary") or "") + "\n" + "\n".join(
+                    str(b.get("content") or "") for b in out.get("blocks", []) if b.get("type") == "markdown")
+                KnowledgeGraphService(GraphRepository(self.db)).contribute_from_text(
+                    task.owner_id, task.workspace_id, text,
+                    source_ref={"document_id": task.primary_document, "chunk_id": result.task_id,
+                                "source_type": "agent"})
+            except Exception:
+                pass
+
         if persist:
             self._persist(task, result, workflow=workflow, parent_task_id=parent_task_id,
                           conversation_id=conversation_id)

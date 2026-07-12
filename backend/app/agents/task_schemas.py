@@ -17,6 +17,7 @@ class _BaseTaskRequest(BaseModel):
     allowed_tools: Optional[List[str]] = None
     top_k: Optional[int] = Field(default=None, ge=1, le=50)
     verify: Optional[str] = Field(default=None, pattern="^(off|fast|thorough)$")  # M3 verification mode
+    contribute_graph: Optional[bool] = None   # P7-M1: feed the answer into the knowledge graph
 
 
 class ResearchRequest(_BaseTaskRequest):

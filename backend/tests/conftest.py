@@ -34,6 +34,7 @@ from app.citations import models as _cite_models  # noqa: F401
 from app.documents import models as _doc_models  # noqa: F401
 from app.flashcards import models as _fc_models  # noqa: F401
 from app.ingestion import models as _ing_models  # noqa: F401
+from app.knowledge import models as _kg_models  # noqa: F401
 from app.media import models as _media_models  # noqa: F401
 from app.mediaworkspace import models as _mediaws_models  # noqa: F401
 from app.mmcontext import models as _mmc_models  # noqa: F401
@@ -325,6 +326,9 @@ def app(engine, SessionFactory, fake_index):
     from app.agents.task_api import router as agent_tasks_router
     from app.reasoning.api import router as verification_router
     from app.orchestration.api import router as orchestration_router
+    from app.knowledge.api import get_graph_runner
+    from app.knowledge.api import router as knowledge_router
+    from app.knowledge.runner import InlineRunner as GraphInlineRunner
     from app.vision.api import get_vision_runner
     from app.vision.api import router as vision_router
     from app.vision.engines import FakeVisionEngine
@@ -371,6 +375,7 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(agent_tasks_router)
     application.include_router(verification_router)
     application.include_router(orchestration_router)
+    application.include_router(knowledge_router)
     application.include_router(tintel_router)
     application.include_router(tretrieval_router)
     application.include_router(vision_router)
@@ -415,6 +420,8 @@ def app(engine, SessionFactory, fake_index):
     application.dependency_overrides[get_vision_runner] = lambda: VisionInlineRunner(SessionFactory, FakeVisionEngine())
     # Multimodal search uses the faiss-free lexical text retriever in tests (no FAISS/torch).
     application.dependency_overrides[get_text_retriever] = lambda: LexicalTextRetriever()
+    # Knowledge-graph construction runs inline (synchronously) in tests with the deterministic extractor.
+    application.dependency_overrides[get_graph_runner] = lambda: GraphInlineRunner(SessionFactory)
     return application
 
 
