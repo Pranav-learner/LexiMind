@@ -38,7 +38,9 @@ def test_tool_and_agent_discovery(workspace):
     assert agents.status_code == 200
     by = {a["name"]: a for a in agents.json()}
     assert by["workspace_agent"]["implemented"] is True
-    assert by["research_agent"]["status"] == "planned"
+    # Module 2 implements research/writing/comparison/study; verification remains planned.
+    assert by["research_agent"]["status"] == "available"
+    assert by["verification_agent"]["status"] == "planned"
 
 
 def test_unknown_tool_404(workspace):

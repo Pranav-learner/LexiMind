@@ -94,10 +94,22 @@ class AgentRegistry:
                            "retrieve_transcript", "query_dashboard", "generate_summary",
                            "generate_notes", "generate_flashcards", "create_note"],
             status="available", implemented=True))
-        # Future agents — DESCRIPTORS ONLY (no implementations in Module 1).
+        # Phase 6 Module 2 — the specialized agents (implemented; drive the /agent-tasks API).
+        for name, desc, caps, tools in [
+            ("research_agent", "Autonomous multi-step research over the workspace (Phase 6 Module 2).",
+             ["research", "planning", "synthesis"], ["workspace_search", "temporal_search"]),
+            ("writing_agent", "Long-form document drafting from workspace knowledge (Phase 6 Module 2).",
+             ["writing", "editing", "synthesis"], ["workspace_search"]),
+            ("comparison_agent", "Compare documents/recordings/topics and surface conflicts (Phase 6 Module 2).",
+             ["comparison", "analysis"], ["workspace_search", "temporal_search"]),
+            ("study_agent", "Generate study materials + learning plans (Phase 6 Module 2).",
+             ["study", "generation", "planning"],
+             ["generate_notes", "generate_flashcards", "query_dashboard"]),
+        ]:
+            self.register(AgentDescriptor(name=name, version="1.0", description=desc, capabilities=caps,
+                                          default_tools=tools, status="available", implemented=True))
+        # Future agents — DESCRIPTORS ONLY (no implementations yet).
         for name, desc, caps in [
-            ("research_agent", "Multi-step research over the workspace (Phase 6 Module 2).", ["research", "synthesis"]),
-            ("writing_agent", "Long-form drafting from workspace knowledge (Phase 6 Module 2).", ["writing", "editing"]),
             ("verification_agent", "Claim verification + reasoning checks (Phase 6 Module 3).", ["verification", "reasoning"]),
             ("meeting_agent", "Meeting intelligence over recordings (future).", ["meeting", "action_items"]),
             ("knowledge_graph_agent", "Entity/relationship graph construction (future).", ["graph", "entities"]),

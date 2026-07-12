@@ -86,7 +86,9 @@ def test_tool_registry_discovery_and_specs():
 def test_agent_registry_has_workspace_agent_and_planned_agents():
     agents = {a.name: a for a in agent_registry().all()}
     assert agents["workspace_agent"].implemented is True
-    assert agents["research_agent"].implemented is False and agents["research_agent"].status == "planned"
+    # Module 2 implements the research/writing/comparison/study agents; verification is still planned.
+    assert agents["research_agent"].implemented is True and agents["research_agent"].status == "available"
+    assert agents["verification_agent"].implemented is False and agents["verification_agent"].status == "planned"
 
 
 # --------------------------------------------------------------------- executor (fake tools)

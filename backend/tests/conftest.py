@@ -320,6 +320,7 @@ def app(engine, SessionFactory, fake_index):
     from app.mediaworkspace.engine import TemporalChatEngine
     from app.agents.api import get_agent_services
     from app.agents.api import router as agents_router
+    from app.agents.task_api import router as agent_tasks_router
     from app.vision.api import get_vision_runner
     from app.vision.api import router as vision_router
     from app.vision.engines import FakeVisionEngine
@@ -363,6 +364,7 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(media_router)
     application.include_router(mediaworkspace_router)
     application.include_router(agents_router)
+    application.include_router(agent_tasks_router)
     application.include_router(tintel_router)
     application.include_router(tretrieval_router)
     application.include_router(vision_router)

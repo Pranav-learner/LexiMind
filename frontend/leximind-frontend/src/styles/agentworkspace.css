@@ -1,0 +1,96 @@
+/* Agent Workspace (Phase 6, Module 2) — the "watch an AI researcher work" surface. */
+.aw-page { max-width: 1500px; margin: 0 auto; padding: 20px 24px 60px; }
+.aw-header { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+.aw-header h1 { font-size: 22px; margin: 0; flex: 1; }
+.aw-header a { color: #6366f1; text-decoration: none; font-size: 14px; }
+.aw-muted { color: #64748b; font-size: 13px; }
+
+.aw-grid { display: grid; grid-template-columns: 340px 1fr 260px; gap: 18px; align-items: start; }
+@media (max-width: 1100px) { .aw-grid { grid-template-columns: 1fr; } }
+
+/* ---- config panel ---- */
+.aw-config { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;
+  display: flex; flex-direction: column; gap: 14px; position: sticky; top: 12px; }
+.aw-agent-picker { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.aw-agent-card { display: flex; flex-direction: column; gap: 3px; text-align: left; padding: 10px;
+  border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc; cursor: pointer; transition: .15s; }
+.aw-agent-card:hover { border-color: #a5b4fc; }
+.aw-agent-card.is-active { border-color: #6366f1; background: #eef2ff; box-shadow: 0 0 0 1px #6366f1; }
+.aw-agent-icon { font-size: 20px; }
+.aw-agent-label { font-weight: 600; font-size: 14px; }
+.aw-agent-blurb { font-size: 11px; color: #64748b; line-height: 1.3; }
+
+.aw-field { display: flex; flex-direction: column; gap: 5px; font-size: 13px; font-weight: 600; color: #334155; }
+.aw-field em { font-weight: 400; color: #94a3b8; font-style: normal; font-size: 11px; }
+.aw-field textarea, .aw-field input, .aw-field select { font: inherit; font-weight: 400; padding: 8px 10px;
+  border: 1px solid #cbd5e1; border-radius: 8px; resize: vertical; }
+.aw-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.aw-chip { font-size: 12px; padding: 4px 10px; border: 1px solid #cbd5e1; border-radius: 999px;
+  background: #fff; cursor: pointer; }
+.aw-chip.is-on { background: #6366f1; color: #fff; border-color: #6366f1; }
+
+.aw-run-row { display: flex; }
+.aw-run { flex: 1; padding: 11px; border: none; border-radius: 9px; background: #6366f1; color: #fff;
+  font-weight: 700; font-size: 14px; cursor: pointer; }
+.aw-run:disabled { opacity: .6; cursor: default; }
+.aw-error { color: #dc2626; font-size: 13px; margin: 0; }
+.aw-plan-preview { background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 8px; }
+.aw-plan-preview h4 { margin: 0 0 4px; font-size: 12px; text-transform: uppercase; color: #64748b; }
+.aw-plan-preview pre, .aw-json { font-size: 11px; white-space: pre-wrap; word-break: break-word;
+  margin: 0; color: #334155; max-height: 260px; overflow: auto; }
+
+/* ---- main ---- */
+.aw-main { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; min-height: 400px; }
+.aw-empty { color: #94a3b8; text-align: center; padding: 80px 20px; font-size: 15px; }
+.aw-result-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.aw-result-head h2 { margin: 0; font-size: 19px; }
+.aw-result-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.aw-result-actions button { font-size: 12px; padding: 5px 9px; border: 1px solid #cbd5e1; border-radius: 7px;
+  background: #f8fafc; cursor: pointer; }
+.aw-phase { color: #fff; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+  text-transform: uppercase; }
+
+.aw-steps { display: flex; flex-direction: column; gap: 4px; margin: 16px 0; padding: 12px;
+  background: #f8fafc; border-radius: 9px; }
+.aw-step { display: grid; grid-template-columns: 14px 160px 1fr auto; gap: 8px; align-items: center;
+  font-size: 12px; }
+.aw-step-dot { width: 9px; height: 9px; border-radius: 50%; }
+.aw-step-label { font-weight: 600; color: #334155; }
+.aw-step-detail { color: #64748b; }
+.aw-step-ms { color: #94a3b8; font-variant-numeric: tabular-nums; }
+
+.aw-tabs { display: flex; gap: 4px; border-bottom: 1px solid #e2e8f0; margin-bottom: 14px; }
+.aw-tabs button { border: none; background: none; padding: 8px 12px; font-size: 13px; color: #64748b;
+  cursor: pointer; border-bottom: 2px solid transparent; text-transform: capitalize; }
+.aw-tabs button.is-active { color: #6366f1; border-bottom-color: #6366f1; font-weight: 600; }
+
+.aw-output { line-height: 1.6; font-size: 14.5px; color: #1e293b; overflow-x: auto; }
+.aw-output h1, .aw-output h2, .aw-output h3 { margin-top: 20px; }
+.aw-output table { border-collapse: collapse; margin: 10px 0; }
+.aw-output th, .aw-output td { border: 1px solid #e2e8f0; padding: 6px 10px; text-align: left; }
+.aw-output code { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+.aw-output blockquote { border-left: 3px solid #a5b4fc; margin: 8px 0; padding: 2px 12px; color: #475569; }
+
+.aw-evidence, .aw-citations { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.aw-evidence li { display: grid; grid-template-columns: 34px 1fr; gap: 8px; font-size: 13px;
+  padding-bottom: 8px; border-bottom: 1px solid #f1f5f9; }
+.aw-ev-idx { color: #6366f1; font-weight: 700; }
+.aw-ev-meta { grid-column: 2; color: #94a3b8; font-size: 11px; }
+.aw-citations li { font-size: 13px; color: #334155; }
+.aw-timeline { font-size: 12px; color: #475569; padding-left: 18px; }
+
+/* ---- history ---- */
+.aw-side { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; position: sticky; top: 12px; }
+.aw-side h3 { margin: 0 0 10px; font-size: 15px; }
+.aw-history { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.aw-history li { display: flex; flex-direction: column; gap: 2px; padding: 8px; border: 1px solid #eef2f7;
+  border-radius: 8px; cursor: pointer; transition: .12s; }
+.aw-history li:hover { border-color: #a5b4fc; background: #f8fafc; }
+.aw-hist-type { font-size: 12px; font-weight: 600; color: #334155; text-transform: capitalize; }
+.aw-hist-obj { font-size: 12px; color: #64748b; }
+.aw-hist-status { font-size: 10px; text-transform: uppercase; font-weight: 700; align-self: flex-start;
+  padding: 1px 6px; border-radius: 4px; background: #e2e8f0; color: #475569; }
+.aw-hist-status.s-completed { background: #dcfce7; color: #15803d; }
+.aw-hist-status.s-failed { background: #fee2e2; color: #b91c1c; }
+.aw-hist-status.s-cancelled { background: #f1f5f9; color: #64748b; }
+.aw-hist-wf { font-size: 10px; color: #6366f1; }

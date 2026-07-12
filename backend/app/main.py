@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.health import router as health_router
 from app.api.query import router as query_router
 from app.agents.api import router as agents_router
+from app.agents.task_api import router as agent_tasks_router
 from app.analytics.api import router as analytics_router
 from app.api.upload import router as upload_router
 from app.auth.api import router as auth_router
@@ -61,6 +62,7 @@ app.include_router(ingestion_router)
 app.include_router(media_router)
 app.include_router(mediaworkspace_router)
 app.include_router(agents_router)
+app.include_router(agent_tasks_router)
 app.include_router(tintel_router)
 app.include_router(tretrieval_router)
 app.include_router(vision_router)
