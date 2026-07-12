@@ -29,6 +29,7 @@ const MultimodalWorkspace = lazy(() => import("./pages/MultimodalWorkspace"));
 const MediaWorkspace = lazy(() => import("./pages/MediaWorkspace"));
 const TemporalSearch = lazy(() => import("./pages/TemporalSearch"));
 const MediaAIWorkspace = lazy(() => import("./pages/MediaAIWorkspace"));
+const AgentDebugPanel = lazy(() => import("./pages/AgentDebugPanel"));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -221,6 +222,14 @@ export default function App() {
           element={
             <RequireAuth>
               <MediaAIWorkspace />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/workspace/:workspaceId/agent"
+          element={
+            <RequireAuth>
+              <AgentDebugPanel />
             </RequireAuth>
           }
         />

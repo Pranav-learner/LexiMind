@@ -26,6 +26,7 @@ from sqlalchemy.pool import StaticPool
 from app.db.base import Base, get_db
 
 # Import models so their tables are registered on Base.metadata before create_all.
+from app.agents import models as _agent_models  # noqa: F401
 from app.analytics import models as _an_models  # noqa: F401
 from app.auth import models as _auth_models  # noqa: F401
 from app.chat import models as _chat_models  # noqa: F401
@@ -317,6 +318,8 @@ def app(engine, SessionFactory, fake_index):
     )
     from app.mediaworkspace.api import router as mediaworkspace_router
     from app.mediaworkspace.engine import TemporalChatEngine
+    from app.agents.api import get_agent_services
+    from app.agents.api import router as agents_router
     from app.vision.api import get_vision_runner
     from app.vision.api import router as vision_router
     from app.vision.engines import FakeVisionEngine
@@ -359,6 +362,7 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(ingestion_router)
     application.include_router(media_router)
     application.include_router(mediaworkspace_router)
+    application.include_router(agents_router)
     application.include_router(tintel_router)
     application.include_router(tretrieval_router)
     application.include_router(vision_router)
@@ -390,6 +394,15 @@ def app(engine, SessionFactory, fake_index):
     application.dependency_overrides[get_mediaws_summary_runner] = lambda: InlineRunner(SessionFactory, FakeSummaryEngine())
     application.dependency_overrides[get_mediaws_notes_runner] = lambda: NoteInlineRunner(SessionFactory, FakeNotesEngine())
     application.dependency_overrides[get_mediaws_flashcards_runner] = lambda: FlashcardInlineRunner(SessionFactory, FakeFlashcardEngine())
+    # Agent runtime: FAKED single answer function (no ollama) + inline generation runners (synchronous).
+    def _fake_agent_answer(prompt: str) -> str:
+        return f"Agent answer synthesized from {prompt.count('### Evidence')} evidence block(s)."
+    application.dependency_overrides[get_agent_services] = lambda: {
+        "answer_fn": _fake_agent_answer,
+        "summary_runner": InlineRunner(SessionFactory, FakeSummaryEngine()),
+        "notes_runner": NoteInlineRunner(SessionFactory, FakeNotesEngine()),
+        "flashcard_runner": FlashcardInlineRunner(SessionFactory, FakeFlashcardEngine()),
+    }
     # Vision analysis runs inline (synchronously) in tests with a deterministic fake engine.
     application.dependency_overrides[get_vision_runner] = lambda: VisionInlineRunner(SessionFactory, FakeVisionEngine())
     # Multimodal search uses the faiss-free lexical text retriever in tests (no FAISS/torch).

@@ -65,6 +65,7 @@ def session_scope() -> Iterator[Session]:
 def init_db() -> None:
     """Create all tables. Importing the model modules registers them on Base.metadata."""
     # Imported for their side effect of registering mappers on Base.metadata.
+    from app.agents import models as _agent_models  # noqa: F401
     from app.analytics import models as _an_models  # noqa: F401
     from app.auth import models as _auth_models  # noqa: F401
     from app.chat import models as _chat_models  # noqa: F401
