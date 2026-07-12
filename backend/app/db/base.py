@@ -83,6 +83,7 @@ def init_db() -> None:
     from app.mmcontext import models as _mmc_models  # noqa: F401
     from app.mmretrieval import models as _mmr_models  # noqa: F401
     from app.notes import models as _note_models  # noqa: F401
+    from app.observability import models as _obs_models  # noqa: F401
     from app.orchestration import models as _orch_models  # noqa: F401
     from app.reasoning import models as _reason_models  # noqa: F401
     from app.summaries import models as _sum_models  # noqa: F401

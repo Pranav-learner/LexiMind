@@ -1,0 +1,56 @@
+/* AI Operations Workspace (Phase 8, Module 2). */
+.ob-page { max-width: 1400px; margin: 0 auto; padding: 20px 24px 60px; }
+.ob-header { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+.ob-header h1 { font-size: 22px; margin: 0; }
+.ob-header a { color: #6366f1; text-decoration: none; font-size: 14px; }
+.ob-health { color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; text-transform: uppercase; }
+.ob-tracequery { margin-left: auto; display: flex; gap: 6px; }
+.ob-tracequery input { font: inherit; padding: 7px 12px; border: 1px solid #cbd5e1; border-radius: 8px; width: 260px; }
+.ob-tracequery button { padding: 7px 14px; border: none; border-radius: 8px; background: #6366f1; color: #fff; font-weight: 700; cursor: pointer; }
+.ob-error { color: #b91c1c; background: #fef2f2; padding: 6px 12px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+.ob-muted { color: #94a3b8; }
+
+.ob-tabs { display: flex; gap: 4px; border-bottom: 1px solid #e2e8f0; margin-bottom: 16px; }
+.ob-tabs button { border: none; background: none; padding: 8px 16px; font-size: 13px; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; text-transform: capitalize; }
+.ob-tabs button.is-active { color: #6366f1; border-bottom-color: #6366f1; font-weight: 600; }
+
+.ob-stat-row { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.ob-stat { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 11px 18px; display: flex; flex-direction: column; min-width: 100px; }
+.ob-stat-v { font-size: 20px; font-weight: 800; color: #334155; }
+.ob-stat-l { font-size: 11px; color: #94a3b8; }
+
+.ob-alerts-banner { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.ob-alert-chip { color: #fff; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 6px; }
+
+.ob-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.ob-cols h4 { font-size: 12px; text-transform: uppercase; color: #64748b; margin: 0 0 8px; }
+.ob-source-row, .ob-health-row { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 5px 0; border-bottom: 1px solid #f1f5f9; }
+.ob-src-name { display: flex; align-items: center; gap: 6px; color: #334155; }
+.ob-src-meta { margin-left: auto; color: #94a3b8; font-size: 11.5px; }
+.ob-health-row b { color: #334155; } .ob-health-row .ob-muted { margin-left: auto; font-size: 11.5px; }
+.ob-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+
+.ob-traces { display: grid; grid-template-columns: 280px 1fr; gap: 16px; align-items: start; }
+@media (max-width: 1000px) { .ob-traces, .ob-cols { grid-template-columns: 1fr; } }
+.ob-trace-list { display: flex; flex-direction: column; gap: 4px; }
+.ob-trace-item { display: flex; align-items: center; gap: 8px; text-align: left; padding: 8px 10px; border: 1px solid #eef2f7; border-radius: 8px; background: #fff; cursor: pointer; }
+.ob-trace-item.is-active { border-color: #6366f1; box-shadow: 0 0 0 1px #6366f1; }
+.ob-trace-op { font-size: 13px; font-weight: 600; color: #334155; }
+.ob-trace-meta { margin-left: auto; font-size: 11px; color: #94a3b8; }
+.ob-trace-detail h3 { font-size: 16px; margin: 0 0 12px; }
+.ob-empty { color: #94a3b8; text-align: center; padding: 80px 20px; }
+
+.ob-waterfall { display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; }
+.ob-wf-row { display: grid; grid-template-columns: 160px 1fr 54px; gap: 8px; align-items: center; font-size: 12px; }
+.ob-wf-name { color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ob-wf-track { background: #f1f5f9; border-radius: 4px; height: 16px; position: relative; }
+.ob-wf-bar { height: 16px; border-radius: 4px; min-width: 2px; }
+.ob-wf-ms { text-align: right; color: #94a3b8; font-variant-numeric: tabular-nums; }
+
+.ob-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.ob-table th, .ob-table td { border-bottom: 1px solid #eef2f7; padding: 7px 10px; text-align: left; }
+.ob-table th { color: #64748b; font-size: 11px; text-transform: uppercase; }
+
+.ob-alert-actions { display: flex; gap: 8px; margin-bottom: 12px; }
+.ob-alert-actions button { padding: 7px 14px; border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; cursor: pointer; font-size: 13px; }
+.ob-danger { color: #b91c1c; border: none; background: none; cursor: pointer; font-size: 16px; }
