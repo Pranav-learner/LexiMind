@@ -187,7 +187,6 @@ class PipelineMediaEngine:
         kind = _kind(ext)
 
         meta = self._probe(path)
-        speakers_hint = 0
         yield {"type": "classification", "media_kind": kind, "media_category": "unknown",
                "category_confidence": None, "language": meta.get("language", "")}
         yield {"type": "metadata", **meta, "duration_ms": meta.get("duration_ms", 0)}
@@ -201,7 +200,6 @@ class PipelineMediaEngine:
         # --- diarization ---
         yield {"type": "stage", "stage": "diarization", "progress": 45}
         for ev in self._diarize(path, segments):
-            speakers_hint += 1 if ev.get("type") == "speaker" else 0
             yield ev
 
         if kind == "video":

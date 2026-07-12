@@ -98,6 +98,9 @@ export default function WorkspaceDetail() {
             <Link className="ws-btn primary" to={`/workspace/${ws.id}/context`}>
               🧠 Context
             </Link>
+            <Link className="ws-btn primary" to={`/workspace/${ws.id}/media`}>
+              🎬 Audio &amp; Video
+            </Link>
             <Link className="ws-btn primary" to={`/workspace/${ws.id}/library`}>
               📚 Open Document Library
             </Link>
