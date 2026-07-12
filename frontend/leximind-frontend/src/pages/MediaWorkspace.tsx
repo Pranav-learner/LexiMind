@@ -9,7 +9,7 @@
 // the ingestion layer only; retrieval/chat over media arrive in a later module.
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { ApiError } from "../api/client";
 import { listDocuments } from "../api/documents";
 import {
@@ -32,8 +32,10 @@ const KIND_ICON: Record<string, string> = { audio: "🎧", video: "🎬" };
 
 export default function MediaWorkspace() {
   const { workspaceId = "" } = useParams();
+  const [searchParams] = useSearchParams();
+  const deepLinkDoc = searchParams.get("doc");            // set when arriving from a temporal citation
   const [media, setMedia] = useState<LibraryDocument[]>([]);
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(deepLinkDoc);
   const [job, setJob] = useState<MediaJob | null>(null);
   const [uploadPct, setUploadPct] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);

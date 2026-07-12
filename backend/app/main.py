@@ -21,6 +21,8 @@ from app.vision.api import router as vision_router
 from app.notes.api import router as notes_router
 from app.notes.api import tag_router as notes_tag_router
 from app.summaries.api import router as summary_router
+from app.tintel.api import router as tintel_router
+from app.tretrieval.api import router as tretrieval_router
 from app.workspaces.api import router as workspace_router
 
 app = FastAPI(title="LexiMind API")
@@ -55,6 +57,8 @@ app.include_router(citations_router)
 app.include_router(analytics_router)
 app.include_router(ingestion_router)
 app.include_router(media_router)
+app.include_router(tintel_router)
+app.include_router(tretrieval_router)
 app.include_router(vision_router)
 app.include_router(mmsearch_router)
 app.include_router(mmcontext_router)

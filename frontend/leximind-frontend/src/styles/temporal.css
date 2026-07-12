@@ -1,0 +1,72 @@
+/* Temporal Search (Phase 5, Module 3). Reuses shared tokens (--primary, --border, --surface,
+   --surface-2, --text, --text-muted, --danger, --radius, --shadow). Theme-aware via variables. */
+
+.temporal-page { max-width: 1000px; margin: 0 auto; width: 100%; padding: 20px 24px 60px; }
+.temporal-header h1 { margin: 6px 0 4px; font-size: 24px; }
+.temporal-back { font-size: 13px; color: var(--text-muted); text-decoration: none; }
+.temporal-back:hover { color: var(--primary); }
+.temporal-sub { margin: 0; color: var(--text-muted); font-size: 13.5px; max-width: 620px; }
+
+.temporal-bar { display: flex; gap: 10px; margin: 16px 0 12px; flex-wrap: wrap; }
+.temporal-bar input { flex: 1 1 340px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 999px;
+  background: var(--surface); color: var(--text); font-size: 15px; }
+.temporal-bar input:focus { border-color: var(--primary); outline: none; }
+.temporal-bar select { padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px;
+  background: var(--surface); color: var(--text); font-size: 13px; max-width: 200px; }
+.temporal-bar button { padding: 10px 20px; border-radius: 999px; border: 1px solid var(--primary);
+  background: var(--primary); color: #fff; font-weight: 600; cursor: pointer; }
+.temporal-bar button:disabled { opacity: .6; cursor: default; }
+
+.temporal-examples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.temporal-chip { font-size: 12.5px; padding: 7px 13px; border-radius: 999px; border: 1px dashed var(--border);
+  background: var(--surface); color: var(--text-muted); cursor: pointer; }
+.temporal-chip:hover { border-color: var(--primary); color: var(--primary); }
+
+.temporal-banner { margin: 14px 0; padding: 10px 14px; border-radius: var(--radius); font-size: 13px;
+  background: color-mix(in srgb, var(--danger) 12%, transparent); color: var(--danger);
+  border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent); }
+
+.temporal-meta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: 16px 0 10px;
+  font-size: 12.5px; color: var(--text-muted); }
+.temporal-intents { display: flex; gap: 10px; flex-wrap: wrap; }
+.temporal-intent { font-weight: 600; }
+.temporal-intent.is-primary { text-decoration: underline; }
+.temporal-timefilter { color: var(--danger); font-weight: 600; }
+.temporal-timing { margin-left: auto; }
+.temporal-linkbtn { background: none; border: none; color: var(--primary); font-size: 12.5px; cursor: pointer; text-decoration: underline; }
+
+/* timeline bar */
+.tl { margin: 6px 0 20px; }
+.tl-track { position: relative; height: 30px; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--border); }
+.tl-dot { position: absolute; top: 50%; transform: translate(-50%, -50%); border-radius: 50%; border: none;
+  cursor: pointer; opacity: .85; box-shadow: 0 0 0 2px var(--surface); }
+.tl-dot:hover { opacity: 1; }
+.tl-axis { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+
+/* prompt viewer */
+.temporal-prompt { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-2); padding: 12px 14px; margin-bottom: 18px; }
+.temporal-prompt h3 { margin: 0 0 8px; font-size: 14px; }
+.temporal-prompt h3 span { color: var(--text-muted); font-weight: 400; font-size: 12px; }
+.temporal-prompt pre { margin: 0; white-space: pre-wrap; word-break: break-word; font-size: 12px; line-height: 1.5;
+  max-height: 320px; overflow: auto; color: var(--text); }
+
+.temporal-empty { color: var(--text-muted); padding: 20px 0; }
+
+/* result cards */
+.temporal-cards { display: flex; flex-direction: column; gap: 10px; }
+.tc { display: flex; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
+.tc-rail { width: 4px; flex-shrink: 0; }
+.tc-body { padding: 10px 14px; flex: 1; min-width: 0; }
+.tc-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 12px; }
+.tc-badge { font-weight: 700; border: 1px solid; border-radius: 999px; padding: 1px 8px; }
+.tc-time { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.tc-speaker { font-weight: 600; }
+.tc-rank { margin-left: auto; color: var(--text-muted); }
+.tc-conf { color: var(--text-muted); border: 1px solid var(--border); border-radius: 999px; padding: 0 7px; }
+.tc-title { font-weight: 600; font-size: 13px; margin-top: 6px; }
+.tc-content { margin: 6px 0; font-size: 13.5px; color: var(--text); line-height: 1.5; }
+.tc-foot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.tc-frame { width: 80px; height: 46px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); }
+.tc-jump { font-size: 12.5px; color: var(--primary); text-decoration: none; font-weight: 600; }
+.tc-jump:hover { text-decoration: underline; }
+.tc-also { font-size: 11.5px; color: var(--text-muted); }

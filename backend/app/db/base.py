@@ -77,6 +77,8 @@ def init_db() -> None:
     from app.mmretrieval import models as _mmr_models  # noqa: F401
     from app.notes import models as _note_models  # noqa: F401
     from app.summaries import models as _sum_models  # noqa: F401
+    from app.tintel import models as _tintel_models  # noqa: F401
+    from app.tretrieval import models as _tret_models  # noqa: F401
     from app.vision import models as _vis_models  # noqa: F401
     from app.workspaces import models as _ws_models  # noqa: F401
 

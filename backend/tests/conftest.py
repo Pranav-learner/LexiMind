@@ -38,6 +38,8 @@ from app.mmcontext import models as _mmc_models  # noqa: F401
 from app.mmretrieval import models as _mmr_models  # noqa: F401
 from app.notes import models as _note_models  # noqa: F401
 from app.summaries import models as _sum_models  # noqa: F401
+from app.tintel import models as _tintel_models  # noqa: F401
+from app.tretrieval import models as _tret_models  # noqa: F401
 from app.vision import models as _vis_models  # noqa: F401
 from app.workspaces import models as _ws_models  # noqa: F401
 
@@ -322,6 +324,8 @@ def app(engine, SessionFactory, fake_index):
     from app.summaries.api import get_summary_runner
     from app.summaries.api import router as summary_router
     from app.summaries.runner import InlineRunner
+    from app.tintel.api import router as tintel_router
+    from app.tretrieval.api import router as tretrieval_router
     from app.workspaces.api import router as workspace_router
 
     def override_get_db():
@@ -345,6 +349,8 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(analytics_router)
     application.include_router(ingestion_router)
     application.include_router(media_router)
+    application.include_router(tintel_router)
+    application.include_router(tretrieval_router)
     application.include_router(vision_router)
     application.include_router(mmsearch_router)
     application.include_router(mmcontext_router)
