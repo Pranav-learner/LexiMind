@@ -13,6 +13,8 @@ import {
   type TaskDetail, type TaskLog, type TaskResult, type TaskType, type WorkflowDef,
 } from "../api/researchAgents";
 import { API_BASE, getToken } from "../api/client";
+import VerificationPanel from "../components/verification/VerificationPanel";
+import { STATUS_META, type VerificationReport } from "../api/verification";
 import "../styles/agentworkspace.css";
 
 const DOC_TYPES = [
@@ -21,7 +23,7 @@ const DOC_TYPES = [
 ];
 const DELIVERABLES = ["study_guide", "flashcards", "quiz", "summary", "revision", "learning_path", "weak_topics"];
 
-type Tab = "output" | "evidence" | "plan" | "timeline" | "citations";
+type Tab = "output" | "evidence" | "plan" | "timeline" | "citations" | "verification";
 
 export default function AgentWorkspace() {
   const { workspaceId = "" } = useParams();
@@ -40,6 +42,7 @@ export default function AgentWorkspace() {
   const [tab, setTab] = useState<Tab>("output");
   const [history, setHistory] = useState<TaskLog[]>([]);
   const [detail, setDetail] = useState<TaskDetail | null>(null);
+  const [verification, setVerification] = useState<VerificationReport | null>(null);
   const abort = useRef<AbortController | null>(null);
 
   const docList = () => docIds.split(/[\s,]+/).map((d) => d.trim()).filter(Boolean);
@@ -86,6 +89,7 @@ export default function AgentWorkspace() {
           document_ids: ids, deliverables }, ctrl.signal);
       }
       setResult(res);
+      setVerification((res.verification as VerificationReport | null) ?? null);
       refreshHistory();
     } catch (e) {
       setError(e instanceof ApiError ? e.message : "Agent task failed.");
@@ -98,6 +102,9 @@ export default function AgentWorkspace() {
     try {
       const d = await getTask(workspaceId, id);
       setDetail(d); setResult(null); setTab("output");
+      // load this task's verification report (may not exist if verification was off)
+      const { getTaskVerification } = await import("../api/verification");
+      getTaskVerification(workspaceId, id).then((v) => setVerification(v.report)).catch(() => setVerification(null));
     } catch (e) { setError(e instanceof ApiError ? e.message : "Could not load task."); }
   }
 
@@ -226,6 +233,14 @@ export default function AgentWorkspace() {
                   <span className="aw-phase" style={{ background: PHASE_COLOR[active.phase] || "#64748b" }}>
                     {active.phase}
                   </span>
+                  {verification && (
+                    <span className="aw-verify-badge" title="Verification status"
+                      style={{ background: (STATUS_META[verification.status] ?? STATUS_META.warning).color }}
+                      onClick={() => setTab("verification")}>
+                      {(STATUS_META[verification.status] ?? STATUS_META.warning).icon}{" "}
+                      {Math.round(verification.confidence.overall * 100)}%
+                    </span>
+                  )}
                   <button onClick={() => downloadExport(activeId, "markdown")}>Export .md</button>
                   <button onClick={() => downloadExport(activeId, "json")}>.json</button>
                   <button onClick={() => doRetry(activeId)}>Retry</button>
@@ -245,7 +260,7 @@ export default function AgentWorkspace() {
               </div>
 
               <nav className="aw-tabs">
-                {(["output", "evidence", "plan", "timeline", "citations"] as Tab[]).map((t) => (
+                {(["output", "evidence", "plan", "timeline", "citations", "verification"] as Tab[]).map((t) => (
                   <button key={t} className={tab === t ? "is-active" : ""} onClick={() => setTab(t)}>{t}</button>
                 ))}
               </nav>
@@ -272,6 +287,12 @@ export default function AgentWorkspace() {
                     </li>
                   ))}
                 </ul>
+              )}
+
+              {tab === "verification" && (
+                verification
+                  ? <VerificationPanel report={verification} />
+                  : <p className="aw-muted">No verification report (verification was off for this task).</p>
               )}
 
               {tab === "plan" && <pre className="aw-json">{JSON.stringify(active.plan, null, 2)}</pre>}

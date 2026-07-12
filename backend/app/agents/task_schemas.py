@@ -16,6 +16,7 @@ class _BaseTaskRequest(BaseModel):
     granted_permissions: Optional[List[str]] = None
     allowed_tools: Optional[List[str]] = None
     top_k: Optional[int] = Field(default=None, ge=1, le=50)
+    verify: Optional[str] = Field(default=None, pattern="^(off|fast|thorough)$")  # M3 verification mode
 
 
 class ResearchRequest(_BaseTaskRequest):

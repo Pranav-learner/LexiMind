@@ -51,6 +51,21 @@ class AgentTaskService:
         agent = get_agent(task.task_type)
         ctx.agent = agent.name
         result = agent.run(task, ctx, executor=executor, events=ctx.events)
+
+        # Phase-6 M3 — every specialized agent auto-verifies (configurable fast/thorough; off to skip).
+        # Reuses the SAME ctx (answer_fn) + the evidence the agent already gathered — no re-retrieval,
+        # no second LLM orchestration. Verification never fails the task (trust layer, not a gate).
+        verify_mode = str(task.params.get("verify", "fast")).lower()
+        if verify_mode in ("fast", "thorough") and result.success:
+            try:
+                from app.reasoning.repository import VerificationRepository
+                from app.reasoning.service import VerificationService
+                vsvc = VerificationService(VerificationRepository(self.db))
+                result.verification = vsvc.verify_task_result(result, ctx, mode=verify_mode,
+                                                              persist=persist)
+            except Exception as e:  # verification is advisory — degrade, never crash the task
+                result.verification = {"status": "warning", "error": f"verification failed: {e}"}
+
         if persist:
             self._persist(task, result, workflow=workflow, parent_task_id=parent_task_id,
                           conversation_id=conversation_id)

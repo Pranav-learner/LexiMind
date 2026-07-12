@@ -54,6 +54,8 @@ def _common(req) -> dict:
     p = {}
     if getattr(req, "top_k", None) is not None:
         p["top_k"] = req.top_k
+    if getattr(req, "verify", None) is not None:
+        p["verify"] = req.verify
     return p
 
 

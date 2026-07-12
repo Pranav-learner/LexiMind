@@ -1,0 +1,94 @@
+/* Verification & Reasoning Inspector (Phase 6, Module 3). */
+
+/* ---- reusable panel ---- */
+.vf-panel { border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; background: #fff; }
+.vf-head { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0; }
+.vf-status { color: #fff; font-weight: 700; font-size: 12px; padding: 3px 10px; border-radius: 999px; }
+.vf-conf-badge { display: flex; align-items: baseline; gap: 6px; }
+.vf-conf-num { font-size: 22px; font-weight: 800; }
+.vf-conf-lbl { font-size: 12px; color: #64748b; }
+.vf-mode { margin-left: auto; font-size: 11px; color: #94a3b8; }
+
+.vf-counts { display: flex; flex-wrap: wrap; gap: 14px; padding: 10px 14px; border-bottom: 1px solid #f1f5f9; }
+.vf-count { display: flex; flex-direction: column; align-items: center; min-width: 56px; }
+.vf-count-n { font-size: 18px; font-weight: 700; color: #334155; }
+.vf-count-l { font-size: 10px; text-transform: uppercase; color: #94a3b8; letter-spacing: .04em; }
+
+.vf-tabs { display: flex; gap: 2px; padding: 0 8px; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; }
+.vf-tabs button { border: none; background: none; padding: 8px 11px; font-size: 12.5px; color: #64748b;
+  cursor: pointer; border-bottom: 2px solid transparent; text-transform: capitalize; }
+.vf-tabs button.is-active { color: #6366f1; border-bottom-color: #6366f1; font-weight: 600; }
+
+.vf-body { padding: 14px; font-size: 13px; }
+.vf-body h5 { margin: 14px 0 6px; font-size: 12px; text-transform: uppercase; color: #64748b; letter-spacing: .03em; }
+.vf-explain { color: #334155; margin: 0 0 8px; }
+.vf-muted { color: #94a3b8; }
+
+.vf-signals { display: flex; flex-direction: column; gap: 6px; }
+.vf-signal { display: grid; grid-template-columns: 150px 1fr 42px 42px; gap: 8px; align-items: center; font-size: 12px; }
+.vf-signal-name { color: #475569; text-transform: capitalize; }
+.vf-bar { height: 8px; background: #eef2f7; border-radius: 4px; overflow: hidden; }
+.vf-bar-fill { height: 100%; }
+.vf-signal-val { text-align: right; font-variant-numeric: tabular-nums; color: #334155; }
+.vf-signal-w { text-align: right; color: #94a3b8; font-size: 11px; }
+
+.vf-warn, .vf-rec, .vf-notes, .vf-missing { margin: 0; padding-left: 18px; color: #475569; display: flex;
+  flex-direction: column; gap: 3px; }
+.vf-warn li { color: #b45309; list-style: none; margin-left: -18px; }
+
+.vf-claims { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.vf-claims li { display: grid; grid-template-columns: auto 1fr; gap: 6px 8px; align-items: start;
+  padding-bottom: 8px; border-bottom: 1px solid #f1f5f9; }
+.vf-claim-status { color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+  text-transform: capitalize; white-space: nowrap; }
+.vf-claim-text { color: #1e293b; }
+.vf-claim-meta { grid-column: 2; font-size: 11px; color: #64748b; }
+.vf-claim-why { grid-column: 2; font-size: 11px; color: #94a3b8; font-style: italic; }
+
+.vf-evidence-tree { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.vf-evidence-tree li { display: grid; grid-template-columns: 34px 70px 1fr; gap: 6px; align-items: start;
+  border-left: 2px solid #e2e8f0; padding-left: 8px; }
+.vf-ev-idx { color: #6366f1; font-weight: 700; }
+.vf-ev-mod { font-size: 10px; text-transform: uppercase; color: #94a3b8; }
+.vf-ev-text { color: #334155; }
+.vf-ev-meta { grid-column: 3; font-size: 11px; color: #94a3b8; }
+
+.vf-contra, .vf-cite-issues { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.vf-contra li, .vf-cite-issues li { border-left: 3px solid #cbd5e1; padding: 6px 10px; background: #f8fafc; border-radius: 0 6px 6px 0; }
+.vf-contra li.sev-high, .vf-cite-issues li.sev-high { border-left-color: #ef4444; }
+.vf-contra li.sev-medium, .vf-cite-issues li.sev-medium { border-left-color: #f59e0b; }
+.vf-contra-head { display: block; font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 700; }
+.vf-contra-desc { display: block; color: #334155; margin: 2px 0; }
+.vf-contra-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; color: #475569; }
+.vf-contra-pair > div { background: #fff; border: 1px solid #eef2f7; border-radius: 6px; padding: 5px 7px; }
+.vf-cite-type { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #b45309; margin-right: 6px; }
+.vf-cite-detail { color: #475569; }
+.vf-json { font-size: 11px; white-space: pre-wrap; word-break: break-word; color: #334155;
+  background: #f8fafc; padding: 10px; border-radius: 8px; max-height: 340px; overflow: auto; }
+
+/* ---- inspector page ---- */
+.vfi-page { max-width: 1300px; margin: 0 auto; padding: 20px 24px 60px; }
+.vfi-header { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+.vfi-header h1 { font-size: 22px; margin: 0; flex: 1; }
+.vfi-header a { color: #6366f1; text-decoration: none; font-size: 14px; }
+.vfi-muted { color: #64748b; }
+.vfi-stats { display: flex; gap: 18px; font-size: 13px; color: #475569; margin-bottom: 14px;
+  padding: 10px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; }
+.vfi-error { color: #dc2626; }
+.vfi-grid { display: grid; grid-template-columns: 300px 1fr; gap: 16px; align-items: start; }
+@media (max-width: 900px) { .vfi-grid { grid-template-columns: 1fr; } }
+.vfi-list { display: flex; flex-direction: column; gap: 6px; }
+.vfi-item { display: flex; gap: 8px; align-items: center; text-align: left; padding: 9px; border: 1px solid #e2e8f0;
+  border-radius: 9px; background: #fff; cursor: pointer; }
+.vfi-item.is-active { border-color: #6366f1; box-shadow: 0 0 0 1px #6366f1; }
+.vfi-item-status { color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0; }
+.vfi-item-main { display: flex; flex-direction: column; }
+.vfi-item-agent { font-size: 13px; font-weight: 600; color: #334155; text-transform: capitalize; }
+.vfi-item-sub { font-size: 11px; color: #94a3b8; }
+.vfi-empty { color: #94a3b8; text-align: center; padding: 80px 20px; border: 1px dashed #e2e8f0; border-radius: 10px; }
+
+/* ---- agent workspace verification badge ---- */
+.aw-verify-badge { color: #fff; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+  cursor: pointer; }

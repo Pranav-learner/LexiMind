@@ -123,6 +123,7 @@ class AgentTaskResult:
     token_usage: int = 0
     estimated_cost: float = 0.0
     timeline: List[Dict[str, Any]] = field(default_factory=list)
+    verification: Optional[Dict[str, Any]] = None   # Phase-6 M3 report (attached by the task service)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -136,6 +137,7 @@ class AgentTaskResult:
             "documents_used": self.documents_used, "media_used": self.media_used,
             "workspace_used": self.workspace_used, "token_usage": self.token_usage,
             "estimated_cost": round(self.estimated_cost, 3), "timeline": self.timeline,
+            "verification": self.verification,
         }
 
 

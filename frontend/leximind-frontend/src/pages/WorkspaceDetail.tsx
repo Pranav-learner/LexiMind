@@ -104,6 +104,9 @@ export default function WorkspaceDetail() {
             <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/agents`}>
               🧑‍🔬 Agent Workspace
             </Link>
+            <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/verification`}>
+              🛡️ Verification Inspector
+            </Link>
             <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/agent`}>
               🤖 Agent Runtime
             </Link>

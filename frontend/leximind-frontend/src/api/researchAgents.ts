@@ -72,6 +72,7 @@ export interface TaskResult {
   token_usage: number;
   estimated_cost: number;
   timeline: Record<string, unknown>[];
+  verification?: Record<string, unknown> | null;   // Phase-6 M3 report (present unless verify=off)
 }
 
 export interface TaskLog {
