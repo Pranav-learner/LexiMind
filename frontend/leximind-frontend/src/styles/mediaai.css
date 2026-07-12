@@ -1,0 +1,81 @@
+/* Audio & Video AI Workspace (Phase 5, Module 4). Reuses shared tokens (--primary, --border,
+   --surface, --surface-2, --text, --text-muted, --danger, --radius, --shadow). Theme-aware. */
+
+.mai-page { max-width: 1400px; margin: 0 auto; width: 100%; padding: 16px 20px 48px; }
+.mai-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.mai-header h1 { margin: 4px 0 0; font-size: 22px; }
+.mai-back { font-size: 13px; color: var(--text-muted); text-decoration: none; }
+.mai-back:hover { color: var(--primary); }
+.mai-toast { background: var(--primary); color: #fff; padding: 8px 14px; border-radius: 999px; font-size: 13px; cursor: pointer; }
+.mai-banner { margin: 12px 0; padding: 10px 14px; border-radius: var(--radius); font-size: 13px;
+  background: color-mix(in srgb, var(--danger) 12%, transparent); color: var(--danger);
+  border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent); }
+
+.mai-grid { display: grid; grid-template-columns: 220px minmax(0, 1fr) 340px; gap: 16px; margin-top: 14px; }
+@media (max-width: 1100px) { .mai-grid { grid-template-columns: 1fr; } }
+
+.mai-empty { color: var(--text-muted); font-size: 13px; padding: 12px 0; }
+
+/* library */
+.mai-library h2, .mai-side h3, .mai-timeline h3, .mai-transcript h3, .mai-chat h3, .mai-actions h3 { font-size: 14px; margin: 0 0 10px; }
+.mai-library ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.mai-lib { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; padding: 8px 10px;
+  border-radius: 8px; border: 1px solid transparent; background: transparent; color: var(--text); cursor: pointer; font-size: 13px; }
+.mai-lib:hover { background: var(--surface-2); }
+.mai-lib.is-active { background: var(--surface-2); border-color: var(--primary); }
+.mai-lib-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mai-lib-ready { font-size: 12px; }
+
+/* player */
+.mai-player-wrap { position: relative; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: #000; }
+.mai-video { width: 100%; max-height: 380px; display: block; background: #000; }
+.mai-noplayer { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 40px; color: #cbd5e1; background: var(--surface-2); }
+.mai-noplayer span { font-size: 40px; }
+.mai-pos { position: absolute; bottom: 8px; right: 10px; font-size: 11px; color: #fff; background: rgba(0,0,0,.55); padding: 2px 8px; border-radius: 999px; font-variant-numeric: tabular-nums; }
+
+/* timeline */
+.mai-timeline { margin-top: 16px; }
+.tll { position: relative; }
+.tll-lanes { position: relative; display: flex; flex-direction: column; gap: 6px; }
+.tll-lane { display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: 8px; }
+.tll-lane-label { font-size: 11.5px; font-weight: 600; }
+.tll-track { position: relative; height: 22px; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--border); overflow: hidden; }
+.tll-seg { position: absolute; top: 2px; height: 16px; border: none; border-radius: 3px; opacity: .8; cursor: pointer; padding: 0 4px; overflow: hidden; }
+.tll-seg:hover { opacity: 1; }
+.tll-seg.is-active { opacity: 1; box-shadow: 0 0 0 2px var(--text); }
+.tll-seg-label { font-size: 9.5px; color: #fff; white-space: nowrap; }
+.tll-playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--danger); pointer-events: none; }
+.tll-axis { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--text-muted); margin-top: 4px; padding-left: 98px; font-variant-numeric: tabular-nums; }
+
+/* transcript */
+.mai-transcript { margin-top: 18px; max-height: 300px; overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; }
+.mai-seg { display: grid; grid-template-columns: 54px 90px 1fr; gap: 8px; padding: 5px 6px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+.mai-seg:hover { background: var(--surface-2); }
+.mai-seg.is-active { background: color-mix(in srgb, var(--primary) 14%, transparent); }
+.mai-seg-t { color: var(--text-muted); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.mai-seg-spk { color: var(--primary); font-weight: 600; font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* side: actions + chat */
+.mai-side { display: flex; flex-direction: column; gap: 16px; }
+.mai-action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.mai-action { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border: 1px solid var(--border);
+  border-radius: 8px; background: var(--surface); color: var(--text); font-size: 12.5px; cursor: pointer; }
+.mai-action:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+.mai-action:disabled { opacity: .5; cursor: default; }
+
+.mai-chat { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); overflow: hidden; min-height: 320px; }
+.mai-chat h3 { padding: 10px 12px 0; }
+.mai-chat-log { flex: 1; overflow: auto; padding: 10px 12px; display: flex; flex-direction: column; gap: 10px; max-height: 420px; }
+.mai-turn { font-size: 13px; }
+.mai-turn--user .mai-turn-body { background: var(--primary); color: #fff; padding: 8px 12px; border-radius: 12px 12px 2px 12px; margin-left: auto; max-width: 85%; width: fit-content; }
+.mai-turn--assistant .mai-turn-body { background: var(--surface-2); color: var(--text); padding: 8px 12px; border-radius: 12px 12px 12px 2px; max-width: 92%; white-space: pre-wrap; }
+.mai-turn-note { font-size: 11px; color: var(--text-muted); margin-top: 3px; font-style: italic; }
+.mai-cites { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+.mai-cite { font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--primary); cursor: pointer; font-variant-numeric: tabular-nums; }
+.mai-cite:hover { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 10%, transparent); }
+.mai-chat-bar { display: flex; gap: 6px; padding: 10px 12px; border-top: 1px solid var(--border); }
+.mai-chat-bar input { flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface-2); color: var(--text); font-size: 13px; }
+.mai-chat-bar input:focus { border-color: var(--primary); outline: none; }
+.mai-chat-bar button { padding: 8px 16px; border-radius: 999px; border: 1px solid var(--primary); background: var(--primary); color: #fff; font-weight: 600; cursor: pointer; }
+.mai-chat-bar button:disabled { opacity: .5; cursor: default; }

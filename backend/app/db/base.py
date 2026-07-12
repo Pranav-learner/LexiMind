@@ -73,6 +73,7 @@ def init_db() -> None:
     from app.flashcards import models as _fc_models  # noqa: F401
     from app.ingestion import models as _ing_models  # noqa: F401
     from app.media import models as _media_models  # noqa: F401
+    from app.mediaworkspace import models as _mediaws_models  # noqa: F401
     from app.mmcontext import models as _mmc_models  # noqa: F401
     from app.mmretrieval import models as _mmr_models  # noqa: F401
     from app.notes import models as _note_models  # noqa: F401

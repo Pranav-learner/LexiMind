@@ -98,6 +98,9 @@ export default function WorkspaceDetail() {
             <Link className="ws-btn primary" to={`/workspace/${ws.id}/context`}>
               🧠 Context
             </Link>
+            <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/media-ai`}>
+              🎧 Media AI Workspace
+            </Link>
             <Link className="ws-btn primary" to={`/workspace/${ws.id}/media`}>
               🎬 Audio &amp; Video
             </Link>

@@ -28,6 +28,7 @@ const ContextInspector = lazy(() => import("./pages/ContextInspector"));
 const MultimodalWorkspace = lazy(() => import("./pages/MultimodalWorkspace"));
 const MediaWorkspace = lazy(() => import("./pages/MediaWorkspace"));
 const TemporalSearch = lazy(() => import("./pages/TemporalSearch"));
+const MediaAIWorkspace = lazy(() => import("./pages/MediaAIWorkspace"));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -212,6 +213,14 @@ export default function App() {
           element={
             <RequireAuth>
               <TemporalSearch />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/workspace/:workspaceId/media-ai"
+          element={
+            <RequireAuth>
+              <MediaAIWorkspace />
             </RequireAuth>
           }
         />

@@ -34,6 +34,7 @@ from app.documents import models as _doc_models  # noqa: F401
 from app.flashcards import models as _fc_models  # noqa: F401
 from app.ingestion import models as _ing_models  # noqa: F401
 from app.media import models as _media_models  # noqa: F401
+from app.mediaworkspace import models as _mediaws_models  # noqa: F401
 from app.mmcontext import models as _mmc_models  # noqa: F401
 from app.mmretrieval import models as _mmr_models  # noqa: F401
 from app.notes import models as _note_models  # noqa: F401
@@ -308,6 +309,14 @@ def app(engine, SessionFactory, fake_index):
     from app.media.api import router as media_router
     from app.media.engines import FakeMediaEngine
     from app.media.runner import InlineRunner as MediaInlineRunner
+    from app.mediaworkspace.api import (
+        get_flashcards_runner as get_mediaws_flashcards_runner,
+        get_notes_runner as get_mediaws_notes_runner,
+        get_summary_runner as get_mediaws_summary_runner,
+        get_temporal_chat_engine,
+    )
+    from app.mediaworkspace.api import router as mediaworkspace_router
+    from app.mediaworkspace.engine import TemporalChatEngine
     from app.vision.api import get_vision_runner
     from app.vision.api import router as vision_router
     from app.vision.engines import FakeVisionEngine
@@ -349,6 +358,7 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(analytics_router)
     application.include_router(ingestion_router)
     application.include_router(media_router)
+    application.include_router(mediaworkspace_router)
     application.include_router(tintel_router)
     application.include_router(tretrieval_router)
     application.include_router(vision_router)
@@ -370,6 +380,16 @@ def app(engine, SessionFactory, fake_index):
     application.dependency_overrides[get_ingestion_runner] = lambda: IngestionInlineRunner(SessionFactory, FakeMultimodalEngine())
     # Audio/Video media processing runs inline (synchronously) in tests with a deterministic fake engine.
     application.dependency_overrides[get_media_runner] = lambda: MediaInlineRunner(SessionFactory, FakeMediaEngine())
+    # Media AI chat: real temporal retrieval over the in-memory DB, but a FAKED LLM (no ollama) — the
+    # answer echoes the citation count so tests can assert the prompt was grounded + answered.
+    def _fake_media_answer(prompt: str) -> str:
+        n = prompt.count("[")
+        return f"Grounded temporal answer citing {n} moment(s). [1]"
+    application.dependency_overrides[get_temporal_chat_engine] = lambda: TemporalChatEngine(answer_fn=_fake_media_answer)
+    # Knowledge-asset actions generate inline (synchronously) with the same fake engines used elsewhere.
+    application.dependency_overrides[get_mediaws_summary_runner] = lambda: InlineRunner(SessionFactory, FakeSummaryEngine())
+    application.dependency_overrides[get_mediaws_notes_runner] = lambda: NoteInlineRunner(SessionFactory, FakeNotesEngine())
+    application.dependency_overrides[get_mediaws_flashcards_runner] = lambda: FlashcardInlineRunner(SessionFactory, FakeFlashcardEngine())
     # Vision analysis runs inline (synchronously) in tests with a deterministic fake engine.
     application.dependency_overrides[get_vision_runner] = lambda: VisionInlineRunner(SessionFactory, FakeVisionEngine())
     # Multimodal search uses the faiss-free lexical text retriever in tests (no FAISS/torch).

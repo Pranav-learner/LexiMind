@@ -14,6 +14,7 @@ from app.documents.reading_api import router as reading_router
 from app.flashcards.api import router as flashcards_router
 from app.ingestion.api import router as ingestion_router
 from app.media.api import router as media_router
+from app.mediaworkspace.api import router as mediaworkspace_router
 from app.mmcontext.api import router as mmcontext_router
 from app.mmretrieval.api import router as mmsearch_router
 from app.mmworkspace.api import router as mmworkspace_router
@@ -57,6 +58,7 @@ app.include_router(citations_router)
 app.include_router(analytics_router)
 app.include_router(ingestion_router)
 app.include_router(media_router)
+app.include_router(mediaworkspace_router)
 app.include_router(tintel_router)
 app.include_router(tretrieval_router)
 app.include_router(vision_router)
