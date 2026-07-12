@@ -82,6 +82,7 @@ def init_db() -> None:
     from app.mediaworkspace import models as _mediaws_models  # noqa: F401
     from app.mmcontext import models as _mmc_models  # noqa: F401
     from app.mmretrieval import models as _mmr_models  # noqa: F401
+    from app.learning import models as _learn_models  # noqa: F401
     from app.notes import models as _note_models  # noqa: F401
     from app.observability import models as _obs_models  # noqa: F401
     from app.optimization import models as _opt_models  # noqa: F401

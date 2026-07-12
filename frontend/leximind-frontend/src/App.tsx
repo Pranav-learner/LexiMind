@@ -40,6 +40,7 @@ const KnowledgeWorkspace = lazy(() => import("./pages/KnowledgeWorkspace"));
 const EvaluationWorkspace = lazy(() => import("./pages/EvaluationWorkspace"));
 const OperationsWorkspace = lazy(() => import("./pages/OperationsWorkspace"));
 const OptimizationWorkspace = lazy(() => import("./pages/OptimizationWorkspace"));
+const LearningWorkspace = lazy(() => import("./pages/LearningWorkspace"));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -320,6 +321,14 @@ export default function App() {
           element={
             <RequireAuth>
               <OptimizationWorkspace />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/workspace/:workspaceId/learning"
+          element={
+            <RequireAuth>
+              <LearningWorkspace />
             </RequireAuth>
           }
         />
