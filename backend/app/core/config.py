@@ -116,5 +116,17 @@ class Settings:
     chat_history_token_budget: int = field(default_factory=lambda: _env_int("LEXIMIND_CHAT_HISTORY_TOKENS", 1500))
     chat_history_max_messages: int = field(default_factory=lambda: _env_int("LEXIMIND_CHAT_HISTORY_MAX_MSGS", 20))
 
+    # --- Phase 5 Module 1: Audio & Video Processing Engine ---
+    # Media files are large; a separate, higher ceiling than document uploads (default 2 GB). The
+    # media upload path enforces this BEFORE any transcription work so oversized files fail cheaply.
+    max_media_bytes: int = field(default_factory=lambda: _env_int("LEXIMIND_MAX_MEDIA_BYTES", 2 * 1024 * 1024 * 1024))
+    # Guard against corrupt-metadata durations (default 6 hours). 0/unknown is allowed.
+    max_media_duration_ms: int = field(default_factory=lambda: _env_int("LEXIMIND_MAX_MEDIA_DURATION_MS", 6 * 3600 * 1000))
+    # Whisper model size + video sampling knobs (used by PipelineMediaEngine; overridable per-deploy).
+    whisper_model: str = field(default_factory=lambda: _env("LEXIMIND_WHISPER_MODEL", "base"))
+    frame_interval_ms: int = field(default_factory=lambda: _env_int("LEXIMIND_FRAME_INTERVAL_MS", 5000))
+    scene_threshold: float = field(default_factory=lambda: _env_float("LEXIMIND_SCENE_THRESHOLD", 27.0))
+    max_frames_per_media: int = field(default_factory=lambda: _env_int("LEXIMIND_MAX_FRAMES", 400))
+
 
 settings = Settings()

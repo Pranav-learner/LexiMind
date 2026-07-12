@@ -33,6 +33,7 @@ from app.citations import models as _cite_models  # noqa: F401
 from app.documents import models as _doc_models  # noqa: F401
 from app.flashcards import models as _fc_models  # noqa: F401
 from app.ingestion import models as _ing_models  # noqa: F401
+from app.media import models as _media_models  # noqa: F401
 from app.mmcontext import models as _mmc_models  # noqa: F401
 from app.mmretrieval import models as _mmr_models  # noqa: F401
 from app.notes import models as _note_models  # noqa: F401
@@ -301,6 +302,10 @@ def app(engine, SessionFactory, fake_index):
     from app.ingestion.api import router as ingestion_router
     from app.ingestion.engines import FakeMultimodalEngine
     from app.ingestion.runner import InlineRunner as IngestionInlineRunner
+    from app.media.api import get_media_runner
+    from app.media.api import router as media_router
+    from app.media.engines import FakeMediaEngine
+    from app.media.runner import InlineRunner as MediaInlineRunner
     from app.vision.api import get_vision_runner
     from app.vision.api import router as vision_router
     from app.vision.engines import FakeVisionEngine
@@ -339,6 +344,7 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(citations_router)
     application.include_router(analytics_router)
     application.include_router(ingestion_router)
+    application.include_router(media_router)
     application.include_router(vision_router)
     application.include_router(mmsearch_router)
     application.include_router(mmcontext_router)
@@ -356,6 +362,8 @@ def app(engine, SessionFactory, fake_index):
     application.dependency_overrides[get_flashcards_runner] = lambda: FlashcardInlineRunner(SessionFactory, FakeFlashcardEngine())
     # Multimodal ingestion runs inline (synchronously) in tests with a deterministic fake engine.
     application.dependency_overrides[get_ingestion_runner] = lambda: IngestionInlineRunner(SessionFactory, FakeMultimodalEngine())
+    # Audio/Video media processing runs inline (synchronously) in tests with a deterministic fake engine.
+    application.dependency_overrides[get_media_runner] = lambda: MediaInlineRunner(SessionFactory, FakeMediaEngine())
     # Vision analysis runs inline (synchronously) in tests with a deterministic fake engine.
     application.dependency_overrides[get_vision_runner] = lambda: VisionInlineRunner(SessionFactory, FakeVisionEngine())
     # Multimodal search uses the faiss-free lexical text retriever in tests (no FAISS/torch).
