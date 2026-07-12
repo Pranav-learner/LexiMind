@@ -36,6 +36,7 @@ from app.flashcards import models as _fc_models  # noqa: F401
 from app.ingestion import models as _ing_models  # noqa: F401
 from app.knowledge import models as _kg_models  # noqa: F401
 from app.graphreason import models as _greason_models  # noqa: F401
+from app.knowledgeworkspace import models as _kws_models  # noqa: F401
 from app.memory import models as _mem_models  # noqa: F401
 from app.media import models as _media_models  # noqa: F401
 from app.mediaworkspace import models as _mediaws_models  # noqa: F401
@@ -332,6 +333,9 @@ def app(engine, SessionFactory, fake_index):
     from app.knowledge.api import router as knowledge_router
     from app.memory.api import router as memory_router
     from app.graphreason.api import router as graphreason_router
+    from app.knowledgeworkspace.api import get_graph_chat_engine
+    from app.knowledgeworkspace.api import router as knowledgeworkspace_router
+    from app.knowledgeworkspace.engine import GraphChatEngine
     from app.knowledge.runner import InlineRunner as GraphInlineRunner
     from app.vision.api import get_vision_runner
     from app.vision.api import router as vision_router
@@ -382,6 +386,7 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(knowledge_router)
     application.include_router(memory_router)
     application.include_router(graphreason_router)
+    application.include_router(knowledgeworkspace_router)
     application.include_router(tintel_router)
     application.include_router(tretrieval_router)
     application.include_router(vision_router)
@@ -428,6 +433,10 @@ def app(engine, SessionFactory, fake_index):
     application.dependency_overrides[get_text_retriever] = lambda: LexicalTextRetriever()
     # Knowledge-graph construction runs inline (synchronously) in tests with the deterministic extractor.
     application.dependency_overrides[get_graph_runner] = lambda: GraphInlineRunner(SessionFactory)
+    # AI Graph Chat: real graph retrieval+reasoning over the in-memory DB, FAKED LLM (no ollama).
+    def _fake_graph_answer(prompt: str) -> str:
+        return f"Graph-grounded answer citing {prompt.count('[')} knowledge item(s). [1]"
+    application.dependency_overrides[get_graph_chat_engine] = lambda: GraphChatEngine(answer_fn=_fake_graph_answer)
     return application
 
 

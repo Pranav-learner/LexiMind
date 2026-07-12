@@ -101,6 +101,9 @@ export default function WorkspaceDetail() {
             <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/media-ai`}>
               🎧 Media AI Workspace
             </Link>
+            <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/knowledge`}>
+              🌐 Knowledge Workspace
+            </Link>
             <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/graph`}>
               🕸️ Knowledge Graph
             </Link>

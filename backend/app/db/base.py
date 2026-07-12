@@ -75,6 +75,7 @@ def init_db() -> None:
     from app.ingestion import models as _ing_models  # noqa: F401
     from app.knowledge import models as _kg_models  # noqa: F401
     from app.graphreason import models as _greason_models  # noqa: F401
+    from app.knowledgeworkspace import models as _kws_models  # noqa: F401
     from app.memory import models as _mem_models  # noqa: F401
     from app.media import models as _media_models  # noqa: F401
     from app.mediaworkspace import models as _mediaws_models  # noqa: F401
