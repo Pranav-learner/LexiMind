@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: leximind-config
+  namespace: {{ .Values.global.namespace }}
+data:
+  ENVIRONMENT: {{ .Values.global.environment | quote }}
+  DATABASE_URL: {{ .Values.database.postgres.url | quote }}
+  REDIS_URL: {{ .Values.cache.redis.url | quote }}
+  LLM_MODEL: "llama3"

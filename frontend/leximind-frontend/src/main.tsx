@@ -18,6 +18,7 @@ import './styles/mmworkspace.css'
 import './styles/collaboration.css'
 import './styles/security.css'
 import './styles/integrations.css'
+import './styles/platform.css'
 import App from './App.tsx'
 import { AuthProvider } from './context/AuthContext'
 

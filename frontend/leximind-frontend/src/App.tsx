@@ -43,6 +43,7 @@ const OptimizationWorkspace = lazy(() => import("./pages/OptimizationWorkspace")
 const LearningWorkspace = lazy(() => import("./pages/LearningWorkspace"));
 const SecurityWorkspace = lazy(() => import("./pages/SecurityWorkspace"));
 const IntegrationsWorkspace = lazy(() => import("./pages/IntegrationsWorkspace"));
+const PlatformConsole = lazy(() => import("./pages/PlatformConsole"));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -347,6 +348,14 @@ export default function App() {
           element={
             <RequireAuth>
               <IntegrationsWorkspace />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/workspace/:workspaceId/platform"
+          element={
+            <RequireAuth>
+              <PlatformConsole />
             </RequireAuth>
           }
         />

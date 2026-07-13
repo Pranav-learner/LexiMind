@@ -42,6 +42,8 @@ from app.security.middleware import SecurityAuthorizationMiddleware
 from app.security.api import router as security_router
 from app.integrations.api import router as integrations_router
 from app.integrations.scheduler import scheduler
+from app.platform.api import router as platform_router
+from app.platform.api import task_dispatcher
 
 app = FastAPI(title="LexiMind API")
 
@@ -62,12 +64,16 @@ def _startup() -> None:
     init_db()
     # Start the integrations background scheduler
     scheduler.start()
+    # Start specialized platform background workers dispatcher
+    task_dispatcher.start()
 
 
 @app.on_event("shutdown")
 def _shutdown() -> None:
     # Stop the integrations background scheduler
     scheduler.stop()
+    # Stop specialized platform background workers dispatcher
+    task_dispatcher.stop()
 
 
 app.include_router(health_router)
@@ -108,6 +114,7 @@ app.include_router(mmcontext_router)
 app.include_router(mmworkspace_router)
 app.include_router(upload_router)
 app.include_router(query_router)
+app.include_router(platform_router)
 
 
 @app.get("/")

@@ -160,6 +160,9 @@ function WorkspaceDetailInner({ ws, onReload }: InnerProps) {
               <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/integrations`}>
                 🔌 Integrations &amp; Automation
               </Link>
+              <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/platform`}>
+                🖥️ Enterprise Platform Console
+              </Link>
               <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/graph`}>
                 🕸️ Knowledge Graph
               </Link>

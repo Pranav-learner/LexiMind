@@ -370,6 +370,7 @@ def app(engine, SessionFactory, fake_index):
     from app.security.middleware import SecurityAuthorizationMiddleware
     from app.security.api import router as security_router
     from app.integrations.api import router as integrations_router
+    from app.platform.api import router as platform_router
 
     def override_get_db():
         db = SessionFactory()
@@ -385,6 +386,7 @@ def app(engine, SessionFactory, fake_index):
     application.include_router(collaboration_router)
     application.include_router(workspace_router)
     application.include_router(integrations_router)
+    application.include_router(platform_router)
     application.include_router(document_router)
     application.include_router(reading_router)
     application.include_router(chat_router)
