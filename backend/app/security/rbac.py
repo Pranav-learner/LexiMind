@@ -33,6 +33,10 @@ SYSTEM_ROLE_PERMISSIONS = {
         "agent.read",
         "agent.write",
         "agent.execute",
+        "integration.read",
+        "integration.write",
+        "integration.delete",
+        "integration.execute",
         "observability.read",
         "eval.read",
         "compliance.admin",
@@ -50,6 +54,8 @@ SYSTEM_ROLE_PERMISSIONS = {
         "graph.write",
         "agent.read",
         "agent.execute",
+        "integration.read",
+        "integration.execute",
         "observability.read",
     },
     "viewer": {
@@ -59,6 +65,7 @@ SYSTEM_ROLE_PERMISSIONS = {
         "note.read",
         "graph.read",
         "agent.read",
+        "integration.read",
     },
 }
 
@@ -157,6 +164,8 @@ def get_effective_permissions(
             "note.write",
             "agent.read",
             "agent.execute",
+            "integration.read",
+            "integration.execute",
         })
 
     return permissions

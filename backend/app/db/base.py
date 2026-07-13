@@ -95,5 +95,6 @@ def init_db() -> None:
     from app.tretrieval import models as _tret_models  # noqa: F401
     from app.vision import models as _vis_models  # noqa: F401
     from app.workspaces import models as _ws_models  # noqa: F401
+    from app.integrations import models as _int_models  # noqa: F401
 
     Base.metadata.create_all(bind=engine)

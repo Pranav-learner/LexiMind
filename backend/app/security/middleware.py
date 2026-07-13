@@ -242,6 +242,8 @@ class SecurityAuthorizationMiddleware(BaseHTTPMiddleware):
             category = "graph"
         elif "agents" in path:
             category = "agent"
+        elif "integrations" in path or "mcp" in path:
+            category = "integration"
         elif "organizations" in path:
             category = "org"
 

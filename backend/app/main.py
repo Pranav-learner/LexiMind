@@ -40,6 +40,8 @@ from app.tretrieval.api import router as tretrieval_router
 from app.workspaces.api import router as workspace_router
 from app.security.middleware import SecurityAuthorizationMiddleware
 from app.security.api import router as security_router
+from app.integrations.api import router as integrations_router
+from app.integrations.scheduler import scheduler
 
 app = FastAPI(title="LexiMind API")
 
@@ -58,6 +60,14 @@ def _startup() -> None:
     # Create the SQLite tables (users, workspaces) if they don't exist yet. Idempotent and
     # cheap; keeps the vector layer (loaded in app.core.state) untouched.
     init_db()
+    # Start the integrations background scheduler
+    scheduler.start()
+
+
+@app.on_event("shutdown")
+def _shutdown() -> None:
+    # Stop the integrations background scheduler
+    scheduler.stop()
 
 
 app.include_router(health_router)
@@ -65,6 +75,7 @@ app.include_router(auth_router)
 app.include_router(security_router)
 app.include_router(collaboration_router)
 app.include_router(workspace_router)
+app.include_router(integrations_router)
 app.include_router(document_router)
 app.include_router(reading_router)
 app.include_router(chat_router)
