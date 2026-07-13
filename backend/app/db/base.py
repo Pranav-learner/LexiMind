@@ -69,6 +69,7 @@ def init_db() -> None:
     from app.analytics import models as _an_models  # noqa: F401
     from app.auth import models as _auth_models  # noqa: F401
     from app.chat import models as _chat_models  # noqa: F401
+    from app.collaboration import models as _collab_models  # noqa: F401
     from app.citations import models as _cite_models  # noqa: F401
     from app.documents import models as _doc_models  # noqa: F401
     from app.evaluation import models as _eval_models  # noqa: F401

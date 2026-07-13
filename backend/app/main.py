@@ -19,6 +19,7 @@ from app.analytics.api import router as analytics_router
 from app.api.upload import router as upload_router
 from app.auth.api import router as auth_router
 from app.chat.api import router as chat_router
+from app.collaboration.api import router as collaboration_router
 from app.citations.api import router as citations_router
 from app.db.base import init_db
 from app.documents.api import router as document_router
@@ -58,6 +59,7 @@ def _startup() -> None:
 
 app.include_router(health_router)
 app.include_router(auth_router)
+app.include_router(collaboration_router)
 app.include_router(workspace_router)
 app.include_router(document_router)
 app.include_router(reading_router)

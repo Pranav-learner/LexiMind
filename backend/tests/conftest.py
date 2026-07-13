@@ -30,6 +30,7 @@ from app.agents import models as _agent_models  # noqa: F401
 from app.analytics import models as _an_models  # noqa: F401
 from app.auth import models as _auth_models  # noqa: F401
 from app.chat import models as _chat_models  # noqa: F401
+from app.collaboration import models as _collab_models  # noqa: F401
 from app.citations import models as _cite_models  # noqa: F401
 from app.documents import models as _doc_models  # noqa: F401
 from app.evaluation import models as _eval_models  # noqa: F401
@@ -304,6 +305,7 @@ def app(engine, SessionFactory, fake_index):
     from app.auth.api import router as auth_router
     from app.chat.api import get_chat_engine
     from app.chat.api import router as chat_router
+    from app.collaboration.api import router as collaboration_router
     from app.documents.api import get_index_context, get_ingestor
     from app.documents.api import router as document_router
     from app.documents.reading_api import router as reading_router
@@ -374,6 +376,7 @@ def app(engine, SessionFactory, fake_index):
 
     application = FastAPI()
     application.include_router(auth_router)
+    application.include_router(collaboration_router)
     application.include_router(workspace_router)
     application.include_router(document_router)
     application.include_router(reading_router)

@@ -57,3 +57,22 @@ def get_optional_user_id(
         return None
     user = UserRepository(db).get_by_id(user_id)
     return user.id if user else None
+
+
+def get_effective_owner_id(
+    workspace_id: str,
+    user_id: str = Depends(get_current_user_id),
+    db: Session = Depends(get_db),
+) -> str:
+    """Resolve the effective owner_id for the requesting user in a workspace context.
+
+    If the user has access to the workspace (via ownership or membership), returns the
+    workspace owner's ID (effective owner). Otherwise, raises AccessDenied (mapped to 403).
+    """
+    from app.collaboration.access import resolve_access
+    from app.collaboration.errors import CollaborationError
+    try:
+        return resolve_access(user_id, workspace_id, db)
+    except CollaborationError as e:
+        raise HTTPException(status_code=e.status_code, detail={"code": e.code, "message": str(e)})
+

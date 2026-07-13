@@ -66,6 +66,13 @@ class Workspace(Base):
     flashcard_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     summary_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
+    # Phase 9 Module 1 Collaboration additions
+    workspace_type: Mapped[str] = mapped_column(String(40), default="personal", nullable=False)
+    organization_id: Mapped[str | None] = mapped_column(String(40), index=True, default=None)
+    template_id: Mapped[str | None] = mapped_column(String(40), default=None)
+    member_count: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    is_shared: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_now, onupdate=_now, nullable=False
@@ -74,4 +81,5 @@ class Workspace(Base):
     __table_args__ = (
         # Composite index: duplicate-name checks and per-owner name lookups.
         Index("ix_workspaces_owner_name", "owner_id", "name"),
+        Index("ix_workspaces_org", "organization_id"),
     )

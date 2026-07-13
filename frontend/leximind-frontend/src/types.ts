@@ -1459,3 +1459,121 @@ export interface WorkspaceOverview {
   activity: Record<string, number>;
   ready_documents: number;
 }
+
+// ----------------------------------------------------------------- collaboration
+export interface Organization {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  creator_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface OrganizationMember {
+  id: string;
+  organization_id: string;
+  user_id: string;
+  role: string;
+  joined_at: string;
+  user?: User;
+}
+
+export interface WorkspaceMember {
+  id: string;
+  workspace_id: string;
+  user_id: string;
+  role: string;
+  joined_at: string;
+  user?: User;
+}
+
+export interface Invitation {
+  id: string;
+  organization_id: string | null;
+  workspace_id: string | null;
+  inviter_id: string;
+  invitee_email: string;
+  invitee_user_id: string | null;
+  token: string;
+  role: string;
+  status: "pending" | "accepted" | "declined" | "expired";
+  created_at: string;
+  expires_at: string;
+}
+
+export interface Comment {
+  id: string;
+  workspace_id: string;
+  author_id: string;
+  target_type: string;
+  target_id: string;
+  parent_comment_id: string | null;
+  content: string;
+  is_edited: boolean;
+  is_resolved: boolean;
+  resolved_at: string | null;
+  resolved_by: string | null;
+  created_at: string;
+  updated_at: string;
+  author?: User;
+  replies?: Comment[];
+}
+
+export interface ActivityEvent {
+  id: string;
+  workspace_id: string;
+  actor_id: string;
+  event_type: string;
+  description: string;
+  target_type: string | null;
+  target_id: string | null;
+  target_title: string | null;
+  created_at: string;
+  actor?: User;
+}
+
+export interface VersionSnapshot {
+  id: string;
+  workspace_id: string;
+  target_type: string;
+  target_id: string;
+  version_number: number;
+  actor_id: string;
+  snapshot: Record<string, any>;
+  change_summary: string;
+  created_at: string;
+  actor?: User;
+}
+
+export interface PresenceMember {
+  user_id: string;
+  display_name: string;
+  last_heartbeat: string;
+  active_document_id: string | null;
+  active_artifact_type: string | null;
+  active_artifact_id: string | null;
+  status: "online" | "away" | "busy" | "offline";
+}
+
+export interface WorkspacePresenceResponse {
+  workspace_id: string;
+  total_online: number;
+  members: PresenceMember[];
+}
+
+export interface SyncEvent {
+  event_id: string;
+  event_type: "comment" | "presence" | "member_added" | "member_removed" | "activity";
+  actor_id: string;
+  payload: Record<string, any>;
+  target_id?: string;
+  created_at: string;
+}
+
+export interface SyncPollResponse {
+  events: SyncEvent[];
+  cursor: number;
+}
+

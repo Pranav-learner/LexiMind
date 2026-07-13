@@ -14,6 +14,7 @@ import { useAuth } from "../context/AuthContext";
 import WorkspaceCard from "../components/workspace/WorkspaceCard";
 import WorkspaceFormModal from "../components/workspace/WorkspaceFormModal";
 import WorkspaceToolbar from "../components/workspace/WorkspaceToolbar";
+import OrganizationSwitcher from "../components/collaboration/OrganizationSwitcher";
 import type {
   ArchivedFilter,
   SortField,
@@ -135,7 +136,8 @@ export default function WorkspacesDashboard() {
           <span className="ws-brand-mark">🧠</span>
           <span>LexiMind</span>
         </div>
-        <div className="ws-header-right">
+        <div className="ws-header-right" style={{ display: "flex", gap: 15, alignItems: "center" }}>
+          <OrganizationSwitcher />
           <span className="ws-user">{user?.display_name || user?.email}</span>
           <button className="ws-btn ghost" onClick={logout}>Log out</button>
         </div>
