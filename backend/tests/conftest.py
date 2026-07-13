@@ -51,6 +51,7 @@ from app.optimization import models as _opt_models  # noqa: F401
 from app.orchestration import models as _orch_models  # noqa: F401
 from app.reasoning import models as _reason_models  # noqa: F401
 from app.summaries import models as _sum_models  # noqa: F401
+from app.security import models as _sec_models  # noqa: F401
 from app.tintel import models as _tintel_models  # noqa: F401
 from app.tretrieval import models as _tret_models  # noqa: F401
 from app.vision import models as _vis_models  # noqa: F401
@@ -366,6 +367,8 @@ def app(engine, SessionFactory, fake_index):
     from app.tintel.api import router as tintel_router
     from app.tretrieval.api import router as tretrieval_router
     from app.workspaces.api import router as workspace_router
+    from app.security.middleware import SecurityAuthorizationMiddleware
+    from app.security.api import router as security_router
 
     def override_get_db():
         db = SessionFactory()
@@ -375,7 +378,9 @@ def app(engine, SessionFactory, fake_index):
             db.close()
 
     application = FastAPI()
+    application.add_middleware(SecurityAuthorizationMiddleware)
     application.include_router(auth_router)
+    application.include_router(security_router)
     application.include_router(collaboration_router)
     application.include_router(workspace_router)
     application.include_router(document_router)

@@ -154,6 +154,9 @@ function WorkspaceDetailInner({ ws, onReload }: InnerProps) {
               <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/learning`}>
                 🔁 Continuous Learning
               </Link>
+              <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/security`}>
+                🛡️ Security &amp; Governance
+              </Link>
               <Link className="ws-btn primary ws-dashboard-cta" to={`/workspace/${ws.id}/graph`}>
                 🕸️ Knowledge Graph
               </Link>

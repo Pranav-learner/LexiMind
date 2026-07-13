@@ -90,6 +90,7 @@ def init_db() -> None:
     from app.orchestration import models as _orch_models  # noqa: F401
     from app.reasoning import models as _reason_models  # noqa: F401
     from app.summaries import models as _sum_models  # noqa: F401
+    from app.security import models as _sec_models  # noqa: F401
     from app.tintel import models as _tintel_models  # noqa: F401
     from app.tretrieval import models as _tret_models  # noqa: F401
     from app.vision import models as _vis_models  # noqa: F401

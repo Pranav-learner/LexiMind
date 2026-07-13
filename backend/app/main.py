@@ -38,9 +38,12 @@ from app.summaries.api import router as summary_router
 from app.tintel.api import router as tintel_router
 from app.tretrieval.api import router as tretrieval_router
 from app.workspaces.api import router as workspace_router
+from app.security.middleware import SecurityAuthorizationMiddleware
+from app.security.api import router as security_router
 
 app = FastAPI(title="LexiMind API")
 
+app.add_middleware(SecurityAuthorizationMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -59,6 +62,7 @@ def _startup() -> None:
 
 app.include_router(health_router)
 app.include_router(auth_router)
+app.include_router(security_router)
 app.include_router(collaboration_router)
 app.include_router(workspace_router)
 app.include_router(document_router)
